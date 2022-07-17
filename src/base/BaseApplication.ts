@@ -1,3 +1,4 @@
+import { BaseApplicationLoader } from "./BaseApplicationLoader";
 import { apiPathResolver, isClass } from "../utils";
 
 export abstract class BaseApplication<S> {
@@ -5,6 +6,11 @@ export abstract class BaseApplication<S> {
 	 * The express server
 	 */
 	public server!: S;
+
+	/**
+	 * The application file loader
+	 */
+	public abstract loader: BaseApplicationLoader<S>;
 
 	/**
 	 * The path to the API routes folder
