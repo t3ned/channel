@@ -28,7 +28,7 @@
 		"declarationMap": false,
 		"sourceMap": true,
 		"removeComments": true,
-		"importsNotUsedAsValues": "preserve",
+		"importsNotUsedAsValues": "error",
 		"preserveConstEnums": true,
 
 		/* Interop Constraints */
