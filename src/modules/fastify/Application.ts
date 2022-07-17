@@ -1,8 +1,14 @@
 import type { FastifyInstance } from "fastify";
 
 import { BaseApplication } from "../../base";
+import { ApplicationLoader } from "./ApplicationLoader";
 
 export class Application extends BaseApplication<FastifyInstance> {
+	/**
+	 * The application file loader
+	 */
+	public loader = new ApplicationLoader(this);
+
 	/**
 	 * Listen for connections
 	 * @param port The port to bind

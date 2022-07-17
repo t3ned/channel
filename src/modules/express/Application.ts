@@ -1,8 +1,14 @@
 import type { Express } from "express";
 
 import { BaseApplication } from "../../base";
+import { ApplicationLoader } from "./ApplicationLoader";
 
 export class Application extends BaseApplication<Express> {
+	/**
+	 * The application file loader
+	 */
+	public loader = new ApplicationLoader(this);
+
 	/**
 	 * Listen for connections
 	 * @param port The port to bind
@@ -16,7 +22,11 @@ export class Application extends BaseApplication<Express> {
 
 		return new Promise((resolve, reject) => {
 			try {
-				this.server.listen(port, host, () => resolve(this));
+				if (host) {
+					this.server.listen(port, host, () => resolve(this));
+				} else {
+					this.server.listen(port, () => resolve(this));
+				}
 			} catch (error) {
 				reject(error);
 			}
