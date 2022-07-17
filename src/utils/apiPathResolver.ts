@@ -1,4 +1,4 @@
-import type { ApiPathResolver } from "../base/Application";
+import type { ApiPathResolver } from "../base";
 import { dirnamePathResolver } from "./dirnamePathResolver";
 import { cwdPathResolver } from "./cwdPathResolver";
 

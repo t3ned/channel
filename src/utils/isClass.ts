@@ -1,4 +1,4 @@
-import type { ContextConstructor } from "../base/Application";
+import type { ContextConstructor } from "../base";
 
 /**
  * Check whether a value is a class
