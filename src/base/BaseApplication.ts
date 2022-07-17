@@ -33,6 +33,11 @@ export abstract class BaseApplication<S> {
 	public defaultVersion?: string;
 
 	/**
+	 * The default middleware order
+	 */
+	public defaultMiddlewareOrder?: MiddlewareOrder;
+
+	/**
 	 * The contexts to pass to route handlers
 	 */
 	public contexts: ContextObj<unknown> = {};
@@ -52,6 +57,31 @@ export abstract class BaseApplication<S> {
 	 */
 	public setApiPath(path: string, resolver: ApiPathResolver = "dirname"): this {
 		this.apiPath = apiPathResolver(path, resolver);
+
+		return this;
+	}
+
+	/**
+	 * Set the default route version
+	 * @param version The version number
+	 * @param prefix The version prefix
+	 *
+	 * @returns The application
+	 */
+	public setDefaultVersion(version: number, prefix = "v"): this {
+		this.defaultVersion = `${prefix}${version}`;
+
+		return this;
+	}
+
+	/**
+	 * Set the default middleware
+	 * @param order The middleware order
+	 *
+	 * @returns The application
+	 */
+	public setDefaultMiddlewareOrder(order: MiddlewareOrder): this {
+		this.defaultMiddlewareOrder = order;
 
 		return this;
 	}
@@ -89,19 +119,6 @@ export abstract class BaseApplication<S> {
 	}
 
 	/**
-	 * Set the default route version
-	 * @param version The version number
-	 * @param prefix The version prefix
-	 *
-	 * @returns The application
-	 */
-	public setDefaultVersion(version: number, prefix = "v"): this {
-		this.defaultVersion = `${prefix}${version}`;
-
-		return this;
-	}
-
-	/**
 	 * Listen for connections
 	 * @param port The port to bind
 	 * @param host The host to bind
@@ -112,8 +129,9 @@ export abstract class BaseApplication<S> {
 }
 
 export type ApiPathResolver = "dirname" | "cwd";
-export type ContextConstructor<T> = new () => T;
+export type MiddlewareOrder = "pre" | "post";
 
+export type ContextConstructor<T> = new () => T;
 export type ContextObj<T> = { [k: string]: T };
 export type Context<T> = ContextObj<T> | T;
 export type ContextClass<T> = ContextObj<ContextConstructor<T>> | ContextConstructor<T>;
