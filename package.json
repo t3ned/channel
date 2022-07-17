@@ -1,0 +1,53 @@
+{
+	"name": "channel",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"typings": "dist/index.d.ts",
+	"author": "T3NED <oss@t3ned.dev>",
+	"license": "Apache-2.0",
+	"description": "Ergonomic, chaining-based Typescript framework for quick API development for Express and Fastify",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:T3NED/channel.git"
+	},
+	"engines": {
+		"node": ">=16.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": [
+		"dist",
+		"!dist/*.tsbuildinfo"
+	],
+	"keywords": [
+		"ergonomic",
+		"framework",
+		"api",
+		"rest",
+		"minimal",
+		"fastify",
+		"express"
+	],
+	"scripts": {
+		"format": "npx prettier --write src",
+		"build": "npx tsc -b .",
+		"watch:build": "npx tsc -w",
+		"lint": "npx eslint src --fix",
+		"test": "npx vitest run --coverage",
+		"watch:test": "npx vitest --coverage"
+	},
+	"devDependencies": {
+		"@types/node": "^18.0.5",
+		"@typescript-eslint/eslint-plugin": "^5.30.6",
+		"@typescript-eslint/parser": "^5.30.6",
+		"c8": "^7.11.3",
+		"eslint": "^8.20.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"husky": "^8.0.1",
+		"prettier": "^2.7.1",
+		"typescript": "^4.7.4",
+		"vitest": "^0.18.1"
+	}
+}

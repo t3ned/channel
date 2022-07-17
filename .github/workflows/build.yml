@@ -1,0 +1,33 @@
+name: CI Build
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout project
+              uses: actions/checkout@v3
+
+            - name: Use Node.js v16
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+
+            - name: Use pnpm latest
+              uses: pnpm/action-setup@v2.2.2
+              with:
+                  version: latest
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Build project
+              run: pnpm build

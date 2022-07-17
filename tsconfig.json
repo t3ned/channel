@@ -1,0 +1,57 @@
+{
+	"compileOnSave": true,
+	"compilerOptions": {
+		/* Projects */
+		"incremental": true,
+
+		/* Language and Environment */
+		"target": "ES2020",
+		"lib": ["ESNext"],
+		"jsx": "preserve",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"useDefineForClassFields": true,
+		"outDir": "dist",
+
+		/* Modules */
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"types": ["node"],
+		"resolveJsonModule": true,
+
+		/* JavaScript Support */
+		"allowJs": true,
+		"checkJs": true,
+
+		/* Emit */
+		"declaration": false,
+		"declarationMap": false,
+		"sourceMap": true,
+		"removeComments": true,
+		"importsNotUsedAsValues": "preserve",
+		"preserveConstEnums": true,
+
+		/* Interop Constraints */
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		/* Type Checking */
+		"noImplicitAny": false,
+		"strictBindCallApply": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+
+		/* Completeness */
+		"skipDefaultLibCheck": true,
+		"skipLibCheck": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules"]
+}

@@ -1,0 +1,17 @@
+# Editor
+.vscode/
+.idea/
+
+# Logs
+logs
+*.log
+
+# Dependencies
+node_modules/
+
+# Typescript Build
+dist/
+*.tsbuildinfo
+
+# Tests
+coverage/
