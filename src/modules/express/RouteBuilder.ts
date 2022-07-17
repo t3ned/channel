@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { BaseRouteBuilder } from "../../base";
+import { Application } from "./Application";
 
 export class RouteBuilder extends BaseRouteBuilder {
 	/**
@@ -24,9 +25,8 @@ export class RouteBuilder extends BaseRouteBuilder {
 	 *
 	 * @returns The route builder
 	 */
-	public version(version: number, prefix?: string): this {
-		// TODO: use default prefix
-		this.versionSlugs.push(`${prefix}${version}`);
+	public version(version: number, prefix = Application.defaultVersionPrefix): this {
+		this.versionSlugs.push(`${prefix ?? ""}${version}`);
 
 		return this;
 	}

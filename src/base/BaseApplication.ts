@@ -30,7 +30,12 @@ export abstract class BaseApplication<S> {
 	/**
 	 * The default route version
 	 */
-	public static defaultVersion?: string;
+	public static defaultVersion?: number;
+
+	/**
+	 * The default route version
+	 */
+	public static defaultVersionPrefix?: string;
 
 	/**
 	 * The default middleware order
@@ -64,12 +69,23 @@ export abstract class BaseApplication<S> {
 	/**
 	 * Set the default route version
 	 * @param version The version number
+	 *
+	 * @returns The application
+	 */
+	public setDefaultVersion(version: number): this {
+		BaseApplication.defaultVersion = version;
+
+		return this;
+	}
+
+	/**
+	 * Set the default route version prefix
 	 * @param prefix The version prefix
 	 *
 	 * @returns The application
 	 */
-	public setDefaultVersion(version: number, prefix = "v"): this {
-		BaseApplication.defaultVersion = `${prefix}${version}`;
+	public setDefaultVersionPrefix(prefix: string): this {
+		BaseApplication.defaultVersionPrefix = prefix;
 
 		return this;
 	}
