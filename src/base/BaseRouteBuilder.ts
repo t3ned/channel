@@ -2,7 +2,7 @@ export abstract class BaseRouteBuilder {
 	/**
 	 * The version slugs for the route
 	 */
-	public versionSlugs: string[] = [];
+	public abstract versionSlugs: string[];
 
 	/**
 	 * The middleware executed before the handler
@@ -26,12 +26,7 @@ export abstract class BaseRouteBuilder {
 	 *
 	 * @returns The route builder
 	 */
-	public version(version: number, prefix?: string): this {
-		// TODO: use default prefix
-		this.versionSlugs.push(`${prefix}${version}`);
-
-		return this;
-	}
+	public abstract version(version: number, prefix?: string): this;
 
 	/**
 	 * Add a middleware before the handler

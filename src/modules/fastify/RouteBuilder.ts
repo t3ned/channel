@@ -3,6 +3,11 @@ import { BaseRouteBuilder } from "../../base";
 
 export class RouteBuilder extends BaseRouteBuilder {
 	/**
+	 * The version slugs for the route
+	 */
+	public versionSlugs: string[] = [];
+
+	/**
 	 * The middleware executed before the handler
 	 */
 	public preMiddlewares: Middleware[] = [];
@@ -11,6 +16,20 @@ export class RouteBuilder extends BaseRouteBuilder {
 	 * The middleware executed after the handler
 	 */
 	public postMiddlewares: Middleware[] = [];
+
+	/**
+	 * Add a supported version to the route
+	 * @param version The version
+	 * @param prefix The version prefix
+	 *
+	 * @returns The route builder
+	 */
+	public version(version: number, prefix?: string): this {
+		// TODO: use default prefix
+		this.versionSlugs.push(`${prefix}${version}`);
+
+		return this;
+	}
 
 	/**
 	 * Add a middleware before the handler
