@@ -1,4 +1,4 @@
-import { BaseApplicationLoader } from "./BaseApplicationLoader";
+import type { BaseApplicationLoader } from "./BaseApplicationLoader";
 import { apiPathResolver, isClass } from "../utils";
 
 export abstract class BaseApplication<S> {

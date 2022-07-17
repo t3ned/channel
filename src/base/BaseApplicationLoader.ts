@@ -1,4 +1,4 @@
-import { BaseApplication } from "./BaseApplication";
+import type { BaseApplication } from "./BaseApplication";
 import { readdir } from "fs/promises";
 import { isRoute } from "../utils";
 
