@@ -33,12 +33,15 @@
 		"format": "npx prettier --write src",
 		"build": "npx tsc -b .",
 		"watch:build": "npx tsc -w",
-		"lint": "npx eslint src --fix"
+		"lint": "npx eslint src --fix",
+		"test": "npx vitest run --coverage",
+		"watch:test": "npx vitest --coverage"
 	},
 	"devDependencies": {
 		"@types/node": "^18.0.5",
 		"@typescript-eslint/eslint-plugin": "^5.30.6",
 		"@typescript-eslint/parser": "^5.30.6",
+		"c8": "^7.11.3",
 		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-prettier": "^4.2.1",
