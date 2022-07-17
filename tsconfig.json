@@ -37,6 +37,8 @@
 		"forceConsistentCasingInFileNames": true,
 
 		/* Type Checking */
+		"strictPropertyInitialization": true,
+		"strictNullChecks": true,
 		"noImplicitAny": false,
 		"strictBindCallApply": true,
 		"noImplicitThis": true,
