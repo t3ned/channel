@@ -22,7 +22,7 @@ jobs:
                   node-version: 16
 
             - name: Use pnpm latest
-              uses: pnpm/actions-setup@v2.2.2
+              uses: pnpm/action-setup@v2.2.2
               with:
                   version: latest
 
