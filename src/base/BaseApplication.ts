@@ -1,5 +1,5 @@
 import type { BaseApplicationLoader } from "./BaseApplicationLoader";
-import { apiPathResolver, isClass } from "../utils";
+import { isClass } from "../utils";
 
 export abstract class BaseApplication<S> {
 	/**
@@ -15,7 +15,7 @@ export abstract class BaseApplication<S> {
 	/**
 	 * The path to the API routes folder
 	 */
-	public apiPath?: string;
+	public routeDirPath?: string;
 
 	/**
 	 * The host to bind
@@ -58,10 +58,9 @@ export abstract class BaseApplication<S> {
 	/**
 	 * Set the path where the API routes are located
 	 * @param path The API route path
-	 * @param resolver The resolver for the path
 	 */
-	public setApiPath(path: string, resolver: ApiPathResolver = "dirname"): this {
-		this.apiPath = apiPathResolver(path, resolver);
+	public setRouteDirPath(path: string): this {
+		this.routeDirPath = path;
 
 		return this;
 	}
@@ -144,7 +143,6 @@ export abstract class BaseApplication<S> {
 	public abstract listen(port: number, host?: string): Promise<this>;
 }
 
-export type ApiPathResolver = "dirname" | "cwd";
 export type MiddlewareOrder = "pre" | "post";
 
 export type ContextConstructor<T> = new () => T;

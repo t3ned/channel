@@ -53,7 +53,7 @@ export abstract class BaseApplicationLoader<S> {
 	 * Get the API route path
 	 */
 	private get _apiPath(): string {
-		if (this.application.apiPath) return this.application.apiPath;
+		if (this.application.routeDirPath) return this.application.routeDirPath;
 		throw new Error("API route directory path not provided");
 	}
 }
