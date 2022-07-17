@@ -4,7 +4,7 @@ export abstract class BaseApplication<S> {
 	/**
 	 * The express server
 	 */
-	public server: S;
+	public server!: S;
 
 	/**
 	 * The path to the API routes folder
@@ -29,7 +29,7 @@ export abstract class BaseApplication<S> {
 	/**
 	 * The contexts to pass to route handlers
 	 */
-	public contexts: Context<unknown> = {};
+	public contexts: ContextObj<unknown> = {};
 
 	/**
 	 * Create an instance of an express application
@@ -72,10 +72,11 @@ export abstract class BaseApplication<S> {
 	 */
 	public addClassContext<T>(contextName: string, context: ContextClass<T>): this {
 		if (isClass(context)) return this.addContext(contextName, new context());
-		if (!this.contexts[contextName]) this.contexts[contextName] = {};
+		if (!this.contexts[contextName] || typeof this.contexts[contextName] !== "object")
+			this.contexts[contextName] = {};
 
 		for (const [key, value] of Object.entries(context).filter(isClass)) {
-			this.contexts[contextName][key] = new value();
+			(this.contexts[contextName] as object)[key] = new value();
 		}
 
 		return this;
