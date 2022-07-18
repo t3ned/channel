@@ -17,7 +17,7 @@ export abstract class BaseApplicationLoader<S> {
 			const mod = await import(path).catch(() => ({}));
 			const routes = Object.values(mod).filter((route) => isRoute(route)) as BaseRouteBuilder[];
 
-			await this.loadRoute(routes);
+			if (routes.length) await this.loadRoute(routes);
 		}
 	}
 
