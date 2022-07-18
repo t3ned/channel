@@ -98,5 +98,5 @@ export const Patch = (route: RoutePath) => new RouteBuilder(route, "patch");
 export const Put = (route: RoutePath) => new RouteBuilder(route, "put");
 export const Delete = (route: RoutePath) => new RouteBuilder(route, "delete");
 
-export type Middleware = (req: Request, res: Response, next: NextFunction) => void;
-export type Handler = (req: Request, res: Response, next: NextFunction) => void;
+export type Middleware = (req: Request, res: Response, next: NextFunction) => Promise<void> | void;
+export type Handler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void;
