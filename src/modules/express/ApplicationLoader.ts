@@ -24,12 +24,8 @@ export class ApplicationLoader extends BaseApplicationLoader<Express> {
 		});
 
 		for (const { method, route, handler, preMiddleware, postMiddleware } of versionedRoutes) {
-			this.application.server[method].bind(this.application.server)(
-				route,
-				...preMiddleware,
-				handler,
-				...postMiddleware,
-			);
+			const handlers = [...preMiddleware, handler, ...postMiddleware];
+			this.application.server[method].bind(this.application.server)(route, ...handlers);
 		}
 	}
 }
