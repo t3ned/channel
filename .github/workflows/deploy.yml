@@ -5,8 +5,8 @@ on:
         types: [released]
 
 jobs:
-    build:
-        name: Build
+    deploy:
+        name: Publish
         runs-on: ubuntu-latest
         steps:
             - name: Checkout project
@@ -29,6 +29,6 @@ jobs:
               run: pnpm build
 
             - name: Publish
-              run: pnpm publish
+              run: pnpm publish --no-git-checks
               env:
                   NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
