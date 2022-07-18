@@ -16,8 +16,9 @@ export abstract class BaseRouteBuilder {
 
 	/**
 	 * @param route The route path
+	 * @param method The route method
 	 */
-	public constructor(public route: RoutePath) {}
+	public constructor(public route: RoutePath, public method: RouteMethod) {}
 
 	/**
 	 * Add a supported version to the route
@@ -54,3 +55,4 @@ export abstract class BaseRouteBuilder {
 }
 
 export type RoutePath = `/${string}`;
+export type RouteMethod = "get" | "post" | "patch" | "put" | "delete";
