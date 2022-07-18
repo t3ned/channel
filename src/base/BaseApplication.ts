@@ -31,22 +31,22 @@ export abstract class BaseApplication<S> {
 	/**
 	 * The route prefix
 	 */
-	public static routePrefix?: RoutePath;
+	public static routePrefix: RoutePath = "/api";
 
 	/**
 	 * The default route version
 	 */
-	public static defaultVersion?: number;
+	public static defaultVersion = 1;
 
 	/**
 	 * The default route version
 	 */
-	public static defaultVersionPrefix?: string;
+	public static defaultVersionPrefix = "v";
 
 	/**
 	 * The default middleware order
 	 */
-	public static defaultMiddlewareOrder?: MiddlewareOrder;
+	public static defaultMiddlewareOrder: MiddlewareOrder = "pre";
 
 	/**
 	 * The contexts to pass to route handlers
