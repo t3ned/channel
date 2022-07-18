@@ -1,5 +1,5 @@
 {
-	"name": "channel",
+	"name": "@t3ned/channel",
 	"version": "1.0.0-alpha",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
