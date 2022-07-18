@@ -1,4 +1,4 @@
-export abstract class BaseRouteBuilder<Middleware> {
+export abstract class BaseRouteBuilder<Middleware = unknown> {
 	/**
 	 * The version slugs for the route
 	 */
