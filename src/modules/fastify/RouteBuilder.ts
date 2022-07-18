@@ -2,21 +2,11 @@ import type { RouteHandlerMethod } from "fastify";
 import { BaseRouteBuilder, RoutePath } from "../../base";
 import { Application } from "./Application";
 
-export class RouteBuilder extends BaseRouteBuilder {
+export class RouteBuilder extends BaseRouteBuilder<Middleware> {
 	/**
 	 * The version slugs for the route
 	 */
 	public _versions: string[] = [];
-
-	/**
-	 * The middleware executed before the handler
-	 */
-	public _preMiddleware: Middleware[] = [];
-
-	/**
-	 * The middleware executed after the handler
-	 */
-	public _postMiddleware: Middleware[] = [];
 
 	/**
 	 * The route handler
@@ -39,42 +29,18 @@ export class RouteBuilder extends BaseRouteBuilder {
 	}
 
 	/**
-	 * Add a middleware before the handler
-	 * @param middleware The middleware to add
-	 *
-	 * @returns the route builder
-	 */
-	public preMiddleware(...middleware: Middleware[]): this {
-		this._preMiddleware.push(...middleware);
-
-		return this;
-	}
-
-	/**
-	 * Add a middleware after the handler
-	 * @param middleware The middleware to add
-	 *
-	 * @returns the route builder
-	 */
-	public postMiddleware(...middleware: Middleware[]): this {
-		this._postMiddleware.push(...middleware);
-
-		return this;
-	}
-
-	/**
 	 * Add a middleware in the default order
 	 * @param middleware The middleware to add
 	 *
 	 * @returns the route builder
 	 */
 	public middleware(...middleware: Middleware[]): this {
-		if (Application.defaultMiddlewareOrder === "post") {
-			this._postMiddleware.push(...middleware);
+		if (Application.defaultMiddlewareOrder === "pre") {
+			this._preMiddleware.push(...middleware);
 			return this;
 		}
 
-		this._preMiddleware.push(...middleware);
+		this._postMiddleware.push(...middleware);
 
 		return this;
 	}

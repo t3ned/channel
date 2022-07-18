@@ -1,4 +1,4 @@
-export abstract class BaseRouteBuilder {
+export abstract class BaseRouteBuilder<Middleware> {
 	/**
 	 * The version slugs for the route
 	 */
@@ -7,12 +7,12 @@ export abstract class BaseRouteBuilder {
 	/**
 	 * The middleware executed before the handler
 	 */
-	public abstract _preMiddleware: unknown[];
+	public _preMiddleware: Middleware[] = [];
 
 	/**
 	 * The middleware executed after the handler
 	 */
-	public abstract _postMiddleware: unknown[];
+	public _postMiddleware: Middleware[] = [];
 
 	/**
 	 * The route handler
@@ -40,15 +40,23 @@ export abstract class BaseRouteBuilder {
 	 *
 	 * @returns the route builder
 	 */
-	public abstract preMiddleware(...middleware: unknown[]): this;
+	public preMiddleware(...middleware: Middleware[]): this {
+		this._preMiddleware.push(...middleware);
+
+		return this;
+	}
 
 	/**
-	 * Add a middleware before the handler
+	 * Add a middleware after the handler
 	 * @param middleware The middleware to add
 	 *
 	 * @returns the route builder
 	 */
-	public abstract postMiddleware(...middleware: unknown[]): this;
+	public postMiddleware(...middleware: Middleware[]): this {
+		this._postMiddleware.push(...middleware);
+
+		return this;
+	}
 
 	/**
 	 * Add a middleware in the default order
@@ -56,7 +64,7 @@ export abstract class BaseRouteBuilder {
 	 *
 	 * @returns the route builder
 	 */
-	public abstract middleware(...middleware: unknown[]): this;
+	public abstract middleware(...middleware: Middleware[]): this;
 
 	/**
 	 * Set the handler for the route
