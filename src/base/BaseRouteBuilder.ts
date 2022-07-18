@@ -2,17 +2,22 @@ export abstract class BaseRouteBuilder {
 	/**
 	 * The version slugs for the route
 	 */
-	public abstract versionSlugs: string[];
+	public abstract _versions: string[];
 
 	/**
 	 * The middleware executed before the handler
 	 */
-	public abstract preMiddlewares: unknown[];
+	public abstract _preMiddleware: unknown[];
 
 	/**
 	 * The middleware executed after the handler
 	 */
-	public abstract postMiddlewares: unknown[];
+	public abstract _postMiddleware: unknown[];
+
+	/**
+	 * The route handler
+	 */
+	public abstract _handler: unknown;
 
 	/**
 	 * @param route The route path
@@ -52,6 +57,14 @@ export abstract class BaseRouteBuilder {
 	 * @returns the route builder
 	 */
 	public abstract middleware(...middleware: unknown[]): this;
+
+	/**
+	 * Set the handler for the route
+	 * @param handler The route handler
+	 *
+	 * @returns The route builder
+	 */
+	public abstract handler(handler: unknown): this;
 }
 
 export type RoutePath = `/${string}`;
