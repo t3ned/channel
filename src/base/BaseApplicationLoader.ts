@@ -1,4 +1,5 @@
 import type { BaseApplication } from "./BaseApplication";
+import type { BaseRouteBuilder } from "./BaseRouteBuilder";
 import { readdir } from "fs/promises";
 import { isRoute } from "../utils";
 
@@ -14,27 +15,17 @@ export abstract class BaseApplicationLoader<S> {
 	public async loadRoutes() {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
-			const routes = Object.values(mod).filter((route) => isRoute(route));
+			const routes = Object.values(mod).filter((route) => isRoute(route)) as BaseRouteBuilder[];
 
-			await this._loadRoute(routes);
+			await this.loadRoute(routes);
 		}
 	}
 
 	/**
 	 * Load a route file
-	 * @param routes The routes
+	 * @param builders The routes
 	 */
-	private async _loadRoute(routes: unknown[]): Promise<void> {
-		// TODO: add typings
-		// TODO: load routes into app
-		void routes;
-	}
-
-	/**
-	 * Bind the route to the router
-	 * @param route The route to bind
-	 */
-	protected abstract bindRoute(route: unknown): Promise<void>;
+	public abstract loadRoute(builders: BaseRouteBuilder[]): Promise<void>;
 
 	/**
 	 * Recursively read all the file paths in a given path
