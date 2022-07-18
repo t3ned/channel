@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyRegisterOptions } from "fastify";
+import type { RouteHandlerMethod } from "fastify";
 import { BaseRouteBuilder, RoutePath } from "../../base";
 import { Application } from "./Application";
 
@@ -98,14 +98,5 @@ export const Patch = (route: RoutePath) => new RouteBuilder(route, "patch");
 export const Put = (route: RoutePath) => new RouteBuilder(route, "put");
 export const Delete = (route: RoutePath) => new RouteBuilder(route, "delete");
 
-export type Middleware = (
-	instance: FastifyInstance,
-	opts: FastifyRegisterOptions<unknown>,
-	done: (error?: Error) => void,
-) => void;
-
-export type Handler = (
-	instance: FastifyInstance,
-	opts: FastifyRegisterOptions<unknown>,
-	done: (error?: Error) => void,
-) => void;
+export type Middleware = RouteHandlerMethod;
+export type Handler = RouteHandlerMethod;
