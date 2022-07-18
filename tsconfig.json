@@ -28,7 +28,7 @@
 		"declarationMap": false,
 		"sourceMap": true,
 		"removeComments": true,
-		"importsNotUsedAsValues": "preserve",
+		"importsNotUsedAsValues": "error",
 		"preserveConstEnums": true,
 
 		/* Interop Constraints */
@@ -37,6 +37,8 @@
 		"forceConsistentCasingInFileNames": true,
 
 		/* Type Checking */
+		"strictPropertyInitialization": true,
+		"strictNullChecks": true,
 		"noImplicitAny": false,
 		"strictBindCallApply": true,
 		"noImplicitThis": true,

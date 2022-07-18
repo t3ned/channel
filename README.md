@@ -19,3 +19,22 @@
 ```shell
 > pnpm add channel
 ```
+
+## Usage
+
+```ts
+import { Application } from "channel/express";
+import express from "express";
+
+const server = express();
+const app = new Application(server)
+	.setRouteDirPath(__dirname, "api")
+	.setRoutePrefix("/api")
+	.setDefaultVersionPrefix("v")
+	.setDefaultVersion(1)
+	.setDefaultMiddlewareOrder("pre");
+
+app.listen(3000, "0.0.0.0")
+	.then(() => console.log(`Listening on port ${app.port}`))
+	.catch((error) => console.error(error));
+```
