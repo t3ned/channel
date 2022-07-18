@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { Middleware } from "./RouteBuilder";
+import type { Handler, Middleware } from "./RouteBuilder";
 import { BaseRouteBuilder, BaseApplicationLoader } from "../../base";
 import { Application } from "./Application";
 import { buildRoutePath } from "../../utils";
@@ -11,19 +11,20 @@ export class ApplicationLoader extends BaseApplicationLoader<FastifyInstance> {
 	 */
 	public async loadRoute(builders: BaseRouteBuilder[]): Promise<void> {
 		const versionedRoutes = builders.flatMap((builder) => {
-			const versions = [...builder.versionSlugs];
+			const versions = [...builder._versions];
 			if (!versions.length) versions.push(Application.defaultVersionSlug);
 
 			return versions.map((version) => ({
 				method: builder.method,
 				route: buildRoutePath(Application.routePrefix, version, builder.route),
-				preMiddlewares: builder.preMiddlewares as Middleware[],
-				postMiddlewares: builder.postMiddlewares as Middleware[],
+				handler: builder._handler as Handler,
+				preMiddleware: builder._preMiddleware as Middleware[],
+				postMiddleware: builder._postMiddleware as Middleware[],
 			}));
 		});
 
-		for (const { method, route, preMiddlewares, postMiddlewares } of versionedRoutes) {
-			console.log(method, route, preMiddlewares, postMiddlewares);
+		for (const { method, route, preMiddleware, postMiddleware } of versionedRoutes) {
+			console.log(method, route, preMiddleware, postMiddleware);
 		}
 	}
 }

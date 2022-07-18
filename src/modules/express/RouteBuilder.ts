@@ -6,17 +6,24 @@ export class RouteBuilder extends BaseRouteBuilder {
 	/**
 	 * The version slugs for the route
 	 */
-	public versionSlugs: string[] = [];
+	public _versions: string[] = [];
 
 	/**
 	 * The middleware executed before the handler
 	 */
-	public preMiddlewares: Middleware[] = [];
+	public _preMiddleware: Middleware[] = [];
 
 	/**
 	 * The middleware executed after the handler
 	 */
-	public postMiddlewares: Middleware[] = [];
+	public _postMiddleware: Middleware[] = [];
+
+	/**
+	 * The route handler
+	 */
+	public _handler: Handler = () => {
+		throw new Error("Handler not implemented");
+	};
 
 	/**
 	 * Add a supported version to the route
@@ -26,7 +33,7 @@ export class RouteBuilder extends BaseRouteBuilder {
 	 * @returns The route builder
 	 */
 	public version(version: number, prefix = Application.defaultVersionPrefix): this {
-		this.versionSlugs.push(`${prefix ?? ""}${version}`);
+		this._versions.push(`${prefix ?? ""}${version}`);
 
 		return this;
 	}
@@ -38,7 +45,7 @@ export class RouteBuilder extends BaseRouteBuilder {
 	 * @returns the route builder
 	 */
 	public preMiddleware(...middleware: Middleware[]): this {
-		this.preMiddlewares.push(...middleware);
+		this._preMiddleware.push(...middleware);
 
 		return this;
 	}
@@ -50,7 +57,7 @@ export class RouteBuilder extends BaseRouteBuilder {
 	 * @returns the route builder
 	 */
 	public postMiddleware(...middleware: Middleware[]): this {
-		this.postMiddlewares.push(...middleware);
+		this._postMiddleware.push(...middleware);
 
 		return this;
 	}
@@ -63,11 +70,23 @@ export class RouteBuilder extends BaseRouteBuilder {
 	 */
 	public middleware(...middleware: Middleware[]): this {
 		if (Application.defaultMiddlewareOrder === "post") {
-			this.postMiddlewares.push(...middleware);
+			this._postMiddleware.push(...middleware);
 			return this;
 		}
 
-		this.preMiddlewares.push(...middleware);
+		this._preMiddleware.push(...middleware);
+
+		return this;
+	}
+
+	/**
+	 * Set the handler for the route
+	 * @param handler The route handler
+	 *
+	 * @returns The route builder
+	 */
+	public handler(handler: Handler): this {
+		this._handler = handler;
 
 		return this;
 	}
@@ -80,3 +99,4 @@ export const Put = (route: RoutePath) => new RouteBuilder(route, "put");
 export const Delete = (route: RoutePath) => new RouteBuilder(route, "delete");
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => void;
+export type Handler = (req: Request, res: Response, next: NextFunction) => void;
