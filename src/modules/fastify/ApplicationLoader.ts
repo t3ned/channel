@@ -1,4 +1,4 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, HTTPMethods } from "fastify";
 import type { Handler, Middleware } from "./RouteBuilder";
 import { BaseRouteBuilder, BaseApplicationLoader } from "../../base";
 import { Application } from "./Application";
@@ -23,8 +23,13 @@ export class ApplicationLoader extends BaseApplicationLoader<FastifyInstance> {
 			}));
 		});
 
-		for (const { method, route, preMiddleware, postMiddleware } of versionedRoutes) {
-			console.log(method, route, preMiddleware, postMiddleware);
+		for (const { method, route, handler } of versionedRoutes) {
+			// TODO: add middleware
+			this.application.server.route({
+				method: method.toUpperCase() as HTTPMethods,
+				url: route,
+				handler,
+			});
 		}
 	}
 }
