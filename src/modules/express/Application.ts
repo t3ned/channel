@@ -7,7 +7,7 @@ export class Application extends BaseApplication<Express> {
 	/**
 	 * The application file loader
 	 */
-	public loader = new ApplicationLoader(this);
+	public loader: ApplicationLoader = new ApplicationLoader(this);
 
 	/**
 	 * Listen for connections
@@ -16,9 +16,11 @@ export class Application extends BaseApplication<Express> {
 	 *
 	 * @returns The application
 	 */
-	public listen(port: number, host?: string): Promise<this> {
+	public async listen(port: number, host?: string): Promise<this> {
 		this.port = port;
 		this.host = host;
+
+		await this.loader.loadRoutes();
 
 		return new Promise((resolve, reject) => {
 			try {

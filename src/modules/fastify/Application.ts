@@ -7,7 +7,7 @@ export class Application extends BaseApplication<FastifyInstance> {
 	/**
 	 * The application file loader
 	 */
-	public loader = new ApplicationLoader(this);
+	public loader: ApplicationLoader = new ApplicationLoader(this);
 
 	/**
 	 * Listen for connections
@@ -20,6 +20,7 @@ export class Application extends BaseApplication<FastifyInstance> {
 		this.port = port;
 		this.host = host;
 
+		await this.loader.loadRoutes();
 		await this.server.listen({ port, host });
 
 		return this;
