@@ -1,4 +1,5 @@
 import type { BaseApplicationLoader } from "./BaseApplicationLoader";
+import type { RoutePath } from "./BaseRouteBuilder";
 import { isClass } from "../utils";
 
 export abstract class BaseApplication<S> {
@@ -26,6 +27,11 @@ export abstract class BaseApplication<S> {
 	 * The port to bind
 	 */
 	public port?: number;
+
+	/**
+	 * The route prefix
+	 */
+	public static routePrefix?: RoutePath;
 
 	/**
 	 * The default route version
@@ -61,6 +67,18 @@ export abstract class BaseApplication<S> {
 	 */
 	public setRouteDirPath(path: string): this {
 		this.routeDirPath = path;
+
+		return this;
+	}
+
+	/**
+	 * Set the route prefix
+	 * @param routePrefix The route prefix
+	 *
+	 * @returns The application
+	 */
+	public setRoutePrefix(routePrefix: RoutePath): this {
+		BaseApplication.routePrefix = routePrefix;
 
 		return this;
 	}
