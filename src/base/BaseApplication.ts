@@ -1,6 +1,7 @@
 import type { BaseApplicationLoader } from "./BaseApplicationLoader";
 import type { RoutePath } from "./BaseRouteBuilder";
 import { isClass } from "../utils";
+import { join } from "path";
 
 export abstract class BaseApplication<S> {
 	/**
@@ -65,8 +66,8 @@ export abstract class BaseApplication<S> {
 	 * Set the path where the API routes are located
 	 * @param path The API route path
 	 */
-	public setRouteDirPath(path: string): this {
-		this.routeDirPath = path;
+	public setRouteDirPath(...path: string[]): this {
+		this.routeDirPath = join(...path);
 
 		return this;
 	}
