@@ -152,6 +152,13 @@ export abstract class BaseApplication<S> {
 	}
 
 	/**
+	 * The default version slug
+	 */
+	public static get defaultVersionSlug(): string {
+		return `${BaseApplication.defaultVersionPrefix}${BaseApplication.defaultVersion}`;
+	}
+
+	/**
 	 * Listen for connections
 	 * @param port The port to bind
 	 * @param host The host to bind
