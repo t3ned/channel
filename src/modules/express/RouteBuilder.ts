@@ -54,6 +54,23 @@ export class RouteBuilder extends BaseRouteBuilder {
 
 		return this;
 	}
+
+	/**
+	 * Add a middleware in the default order
+	 * @param middleware The middleware to add
+	 *
+	 * @returns the route builder
+	 */
+	public middleware(...middleware: Middleware[]): this {
+		if (Application.defaultMiddlewareOrder === "post") {
+			this.postMiddlewares.push(...middleware);
+			return this;
+		}
+
+		this.preMiddlewares.push(...middleware);
+
+		return this;
+	}
 }
 
 export type Middleware = (req: Request, res: Response, next: NextFunction) => void;

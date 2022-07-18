@@ -43,6 +43,14 @@ export abstract class BaseRouteBuilder {
 	 * @returns the route builder
 	 */
 	public abstract postMiddleware(...middleware: unknown[]): this;
+
+	/**
+	 * Add a middleware in the default order
+	 * @param middleware The middleware to add
+	 *
+	 * @returns the route builder
+	 */
+	public abstract middleware(...middleware: unknown[]): this;
 }
 
 export type RoutePath = `/${string}`;
