@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyRegisterOptions } from "fastify";
-import { BaseRouteBuilder } from "../../base";
+import { BaseRouteBuilder, RoutePath } from "../../base";
 import { Application } from "./Application";
 
 export class RouteBuilder extends BaseRouteBuilder {
@@ -72,6 +72,12 @@ export class RouteBuilder extends BaseRouteBuilder {
 		return this;
 	}
 }
+
+export const Get = (route: RoutePath) => new RouteBuilder(route, "get");
+export const Post = (route: RoutePath) => new RouteBuilder(route, "post");
+export const Patch = (route: RoutePath) => new RouteBuilder(route, "patch");
+export const Put = (route: RoutePath) => new RouteBuilder(route, "put");
+export const Delete = (route: RoutePath) => new RouteBuilder(route, "delete");
 
 export type Middleware = (
 	instance: FastifyInstance,
