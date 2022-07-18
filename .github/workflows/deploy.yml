@@ -29,7 +29,7 @@ jobs:
               run: pnpm build
 
             - name: Create .npmrc
-              run: echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
+              run: echo '//registry.npmjs.org/:_authToken=${NPM_PUBLISH_TOKEN}' > .npmrc
 
             - name: Publish
               run: pnpm publish --no-git-checks
