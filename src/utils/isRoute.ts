@@ -1,6 +1,4 @@
-import type { BaseRouteBuilder } from "../base";
-import { RouteBuilder as ExpressRouterBuilder } from "../express";
-import { RouteBuilder as FastifyRouterBuilder } from "../fastify";
+import { BaseRouteBuilder } from "../base";
 
 /**
  * Check whether a value is a route
@@ -9,5 +7,5 @@ import { RouteBuilder as FastifyRouterBuilder } from "../fastify";
  * @returns Whether the value is a route
  */
 export const isRoute = (value: unknown): value is BaseRouteBuilder => {
-	return value instanceof ExpressRouterBuilder || value instanceof FastifyRouterBuilder;
+	return value instanceof BaseRouteBuilder;
 };
