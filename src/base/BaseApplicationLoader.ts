@@ -1,7 +1,8 @@
 import type { BaseApplication } from "./BaseApplication";
 import type { BaseRouteBuilder } from "./BaseRouteBuilder";
+import { buildRoutePath, isRoute } from "../utils";
 import { readdir } from "fs/promises";
-import { isRoute } from "../utils";
+import { extname } from "path";
 
 export abstract class BaseApplicationLoader<S> {
 	/**
@@ -15,9 +16,16 @@ export abstract class BaseApplicationLoader<S> {
 	public async loadRoutes() {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
+			const routePath = path.slice(this._apiPath.length, -extname(path).length);
 			const routes = Object.values(mod).filter((route) => isRoute(route)) as BaseRouteBuilder[];
 
-			if (routes.length) await this.loadRoute(routes);
+			if (routes.length)
+				await this.loadRoute(
+					routes.map((route) => {
+						route.route = buildRoutePath(routePath, route.route);
+						return route;
+					}),
+				);
 		}
 	}
 
