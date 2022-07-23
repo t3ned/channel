@@ -1,6 +1,6 @@
 {
 	"name": "@t3ned/channel",
-	"version": "1.0.0-alpha",
+	"version": "1.0.6-alpha",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
 	"author": "T3NED <oss@t3ned.dev>",
@@ -18,7 +18,9 @@
 	},
 	"files": [
 		"dist",
-		"!dist/*.tsbuildinfo"
+		"!dist/*.tsbuildinfo",
+		"*.js",
+		"*.d.ts"
 	],
 	"keywords": [
 		"ergonomic",
@@ -35,7 +37,9 @@
 		"watch:build": "npx tsc -w",
 		"lint": "npx eslint src --fix",
 		"test": "npx vitest run --coverage",
-		"watch:test": "npx vitest --coverage"
+		"watch:test": "npx vitest --coverage",
+		"prepublish": "node scripts/pre-publish.js",
+		"postpublish": "node scripts/post-publish.js"
 	},
 	"optionalDependencies": {
 		"@types/express": "^4.17.13",
