@@ -1,17 +1,17 @@
 import type {
 	RouteHandlerMethod,
 	HTTPMethods,
-	onRequestAsyncHookHandler,
-	preParsingAsyncHookHandler,
-	preValidationAsyncHookHandler,
-	preHandlerAsyncHookHandler,
-	preSerializationAsyncHookHandler,
-	onSendAsyncHookHandler,
-	onResponseAsyncHookHandler,
-	onTimeoutAsyncHookHandler,
-	onErrorAsyncHookHandler,
-	onReadyAsyncHookHandler,
-	onCloseAsyncHookHandler,
+	onRequestHookHandler,
+	preParsingHookHandler,
+	preValidationHookHandler,
+	preHandlerHookHandler,
+	preSerializationHookHandler,
+	onSendHookHandler,
+	onResponseHookHandler,
+	onTimeoutHookHandler,
+	onErrorHookHandler,
+	onReadyHookHandler,
+	onCloseHookHandler,
 } from "fastify";
 
 import { Application } from "./Application";
@@ -25,47 +25,47 @@ export class RouteBuilder {
 	/**
 	 * The onRequest hook for the route
 	 */
-	public onRequestHook?: onRequestAsyncHookHandler;
+	public onRequestHook?: onRequestHookHandler;
 
 	/**
 	 * The preParsing hook for the route
 	 */
-	public preParsingHook?: preParsingAsyncHookHandler;
+	public preParsingHook?: preParsingHookHandler;
 
 	/**
 	 * The preValidation hook for the route
 	 */
-	public preValidationHook?: preValidationAsyncHookHandler;
+	public preValidationHook?: preValidationHookHandler;
 
 	/**
 	 * The preHandler hook for the route
 	 */
-	public preHandlerHook?: preHandlerAsyncHookHandler;
+	public preHandlerHook?: preHandlerHookHandler;
 
 	/**
 	 * The preSerialization hook for the route
 	 */
-	public preSerializationHook?: preSerializationAsyncHookHandler<unknown>;
+	public preSerializationHook?: preSerializationHookHandler<unknown>;
 
 	/**
 	 * The onSend hook for the route
 	 */
-	public onSendHook?: onSendAsyncHookHandler<unknown>;
+	public onSendHook?: onSendHookHandler<unknown>;
 
 	/**
 	 * The onResponse hook for the route
 	 */
-	public onResponseHook?: onResponseAsyncHookHandler;
+	public onResponseHook?: onResponseHookHandler;
 
 	/**
 	 * The onTimeout hook for the route
 	 */
-	public onTimeoutHook?: onTimeoutAsyncHookHandler;
+	public onTimeoutHook?: onTimeoutHookHandler;
 
 	/**
 	 * The onError hook for the route
 	 */
-	public onErrorHook?: onErrorAsyncHookHandler;
+	public onErrorHook?: onErrorHookHandler;
 
 	/**
 	 * The route handler
@@ -96,7 +96,7 @@ export class RouteBuilder {
 	 * Define the onRequest hook for the route
 	 * @param handler The hook handler
 	 */
-	public onRequest(handler: onRequestAsyncHookHandler): this {
+	public onRequest(handler: onRequestHookHandler): this {
 		this.onRequestHook = handler;
 
 		return this;
@@ -105,7 +105,7 @@ export class RouteBuilder {
 	 * Define the preParsing hook for the route
 	 * @param handler The hook handler
 	 */
-	public preParsing(handler: preParsingAsyncHookHandler): this {
+	public preParsing(handler: preParsingHookHandler): this {
 		this.preParsingHook = handler;
 
 		return this;
@@ -115,7 +115,7 @@ export class RouteBuilder {
 	 * Define the preValidation hook for the route
 	 * @param handler The hook handler
 	 */
-	public preValidation(handler: preValidationAsyncHookHandler): this {
+	public preValidation(handler: preValidationHookHandler): this {
 		this.preValidationHook = handler;
 
 		return this;
@@ -125,7 +125,7 @@ export class RouteBuilder {
 	 * Define the preHandler hook for the route
 	 * @param handler The hook handler
 	 */
-	public preHandler(handler: preHandlerAsyncHookHandler): this {
+	public preHandler(handler: preHandlerHookHandler): this {
 		this.preHandlerHook = handler;
 
 		return this;
@@ -135,7 +135,7 @@ export class RouteBuilder {
 	 * Define the preSerialization hook for the route
 	 * @param handler The hook handler
 	 */
-	public preSerialization<Payload>(handler: preSerializationAsyncHookHandler<Payload>): this {
+	public preSerialization<Payload>(handler: preSerializationHookHandler<Payload>): this {
 		this.preSerializationHook = handler;
 
 		return this;
@@ -145,7 +145,7 @@ export class RouteBuilder {
 	 * Define the onSend hook for the route
 	 * @param handler The hook handler
 	 */
-	public onSend<Payload>(handler: onSendAsyncHookHandler<Payload>): this {
+	public onSend<Payload>(handler: onSendHookHandler<Payload>): this {
 		this.onSendHook = handler;
 
 		return this;
@@ -155,7 +155,7 @@ export class RouteBuilder {
 	 * Define the onResponse hook for the route
 	 * @param handler The hook handler
 	 */
-	public onResponse(handler: onResponseAsyncHookHandler): this {
+	public onResponse(handler: onResponseHookHandler): this {
 		this.onResponseHook = handler;
 
 		return this;
@@ -165,7 +165,7 @@ export class RouteBuilder {
 	 * Define the onTimeout hook for the route
 	 * @param handler The hook handler
 	 */
-	public onTimeout(handler: onTimeoutAsyncHookHandler): this {
+	public onTimeout(handler: onTimeoutHookHandler): this {
 		this.onTimeoutHook = handler;
 
 		return this;
@@ -175,7 +175,7 @@ export class RouteBuilder {
 	 * Define the onError hook for the route
 	 * @param handler The hook handler
 	 */
-	public onError(handler: onErrorAsyncHookHandler): this {
+	public onError(handler: onErrorHookHandler): this {
 		this.onErrorHook = handler;
 
 		return this;
@@ -203,14 +203,14 @@ export const Delete = (route: RoutePath) => new RouteBuilder(route, "DELETE");
 export type RoutePath = `/${string}`;
 
 export type Hook =
-	| onRequestAsyncHookHandler
-	| preParsingAsyncHookHandler
-	| preValidationAsyncHookHandler
-	| preHandlerAsyncHookHandler
-	| preSerializationAsyncHookHandler<unknown>
-	| onSendAsyncHookHandler<unknown>
-	| onResponseAsyncHookHandler
-	| onTimeoutAsyncHookHandler
-	| onErrorAsyncHookHandler
-	| onReadyAsyncHookHandler
-	| onCloseAsyncHookHandler;
+	| onRequestHookHandler
+	| preParsingHookHandler
+	| preValidationHookHandler
+	| preHandlerHookHandler
+	| preSerializationHookHandler<unknown>
+	| onSendHookHandler<unknown>
+	| onResponseHookHandler
+	| onTimeoutHookHandler
+	| onErrorHookHandler
+	| onReadyHookHandler
+	| onCloseHookHandler;
