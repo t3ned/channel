@@ -7,10 +7,12 @@ import type { RoutePath } from "../struct/RouteBuilder";
  * @returns The route path
  */
 export const buildRoutePath = (...parts: (string | undefined)[]): RoutePath => {
-	return parts.reduce((routePath, part) => {
+	let path = parts.reduce((routePath, part) => {
 		if (!part) return routePath;
 		if (!part.startsWith("/")) part = `/${part}`;
-
 		return `${routePath}${part}`;
-	}, "") as RoutePath;
+	}, "") as string;
+
+	if (path.endsWith("/")) path = path.slice(0, -1);
+	return path as RoutePath;
 };
