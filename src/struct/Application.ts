@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 
-import { BaseApplication } from "../../base";
+import { BaseApplication } from "../base";
 import { ApplicationLoader } from "./ApplicationLoader";
 
 export class Application extends BaseApplication<FastifyInstance> {

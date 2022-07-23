@@ -1,8 +1,8 @@
 import type { FastifyInstance, HTTPMethods } from "fastify";
 import type { Handler, Middleware } from "./RouteBuilder";
-import { BaseRouteBuilder, BaseApplicationLoader } from "../../base";
+import { BaseRouteBuilder, BaseApplicationLoader } from "../base";
 import { Application } from "./Application";
-import { buildRoutePath } from "../../utils";
+import { buildRoutePath } from "../utils";
 
 export class ApplicationLoader extends BaseApplicationLoader<FastifyInstance> {
 	/**

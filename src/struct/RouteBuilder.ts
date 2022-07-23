@@ -1,5 +1,5 @@
 import type { RouteHandlerMethod } from "fastify";
-import { BaseRouteBuilder, RoutePath } from "../../base";
+import { BaseRouteBuilder, RoutePath } from "../base";
 import { Application } from "./Application";
 
 export class RouteBuilder extends BaseRouteBuilder<Middleware> {
