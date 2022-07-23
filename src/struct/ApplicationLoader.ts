@@ -3,6 +3,7 @@ import { Application } from "./Application";
 import { buildRoutePath, isRouteBuilder } from "../utils";
 import { readdir } from "fs/promises";
 import { extname } from "path";
+import { ChannelError } from "../errors";
 
 export class ApplicationLoader {
 	/**
@@ -90,6 +91,6 @@ export class ApplicationLoader {
 	 */
 	private get _apiPath(): string {
 		if (this.application.routeDirPath) return this.application.routeDirPath;
-		throw new Error("API route directory path not provided");
+		throw new ChannelError("API route directory path not provided");
 	}
 }

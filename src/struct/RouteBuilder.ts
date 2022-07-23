@@ -14,6 +14,7 @@ import type {
 	onCloseHookHandler,
 } from "fastify";
 
+import { ChannelError } from "../errors/ChannelError";
 import { Application } from "./Application";
 
 export class RouteBuilder {
@@ -71,7 +72,7 @@ export class RouteBuilder {
 	 * The route handler
 	 */
 	public _handler: RouteHandlerMethod = () => {
-		throw new Error("Handler not implemented");
+		throw new ChannelError("Handler not implemented");
 	};
 
 	/**
