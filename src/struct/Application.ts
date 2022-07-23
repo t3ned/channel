@@ -47,11 +47,6 @@ export class Application {
 	public static defaultVersionPrefix = "v";
 
 	/**
-	 * The default middleware order
-	 */
-	public static defaultMiddlewareOrder: MiddlewareOrder = "pre";
-
-	/**
 	 * The contexts to pass to route handlers
 	 */
 	public contexts: ContextObj<unknown> = {};
@@ -106,18 +101,6 @@ export class Application {
 	 */
 	public setDefaultVersionPrefix(prefix: string): this {
 		Application.defaultVersionPrefix = prefix;
-
-		return this;
-	}
-
-	/**
-	 * Set the default middleware
-	 * @param order The middleware order
-	 *
-	 * @returns The application
-	 */
-	public setDefaultMiddlewareOrder(order: MiddlewareOrder): this {
-		Application.defaultMiddlewareOrder = order;
 
 		return this;
 	}
@@ -178,8 +161,6 @@ export class Application {
 		return this;
 	}
 }
-
-export type MiddlewareOrder = "pre" | "post";
 
 export type ContextObj<T> = { [k: string]: T };
 export type Context<T> = ContextObj<T> | T;
