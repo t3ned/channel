@@ -79,7 +79,7 @@ export class RouteBuilder {
 	 * @param path The route path
 	 * @param method The route method
 	 */
-	public constructor(public path: RoutePath, public method: HTTPMethods) {}
+	public constructor(public path: RouteBuilder.RoutePath, public method: HTTPMethods) {}
 
 	/**
 	 * Add a supported version to the route
@@ -195,23 +195,24 @@ export class RouteBuilder {
 	}
 }
 
-export const Get = (route: RoutePath) => new RouteBuilder(route, "GET");
-export const Post = (route: RoutePath) => new RouteBuilder(route, "POST");
-export const Patch = (route: RoutePath) => new RouteBuilder(route, "PATCH");
-export const Put = (route: RoutePath) => new RouteBuilder(route, "PUT");
-export const Delete = (route: RoutePath) => new RouteBuilder(route, "DELETE");
+export namespace RouteBuilder {
+	export type RoutePath = `/${string}`;
+	export type Hook =
+		| onRequestHookHandler
+		| preParsingHookHandler
+		| preValidationHookHandler
+		| preHandlerHookHandler
+		| preSerializationHookHandler<unknown>
+		| onSendHookHandler<unknown>
+		| onResponseHookHandler
+		| onTimeoutHookHandler
+		| onErrorHookHandler
+		| onReadyHookHandler
+		| onCloseHookHandler;
+}
 
-export type RoutePath = `/${string}`;
-
-export type Hook =
-	| onRequestHookHandler
-	| preParsingHookHandler
-	| preValidationHookHandler
-	| preHandlerHookHandler
-	| preSerializationHookHandler<unknown>
-	| onSendHookHandler<unknown>
-	| onResponseHookHandler
-	| onTimeoutHookHandler
-	| onErrorHookHandler
-	| onReadyHookHandler
-	| onCloseHookHandler;
+export const Get = (route: RouteBuilder.RoutePath) => new RouteBuilder(route, "GET");
+export const Post = (route: RouteBuilder.RoutePath) => new RouteBuilder(route, "POST");
+export const Patch = (route: RouteBuilder.RoutePath) => new RouteBuilder(route, "PATCH");
+export const Put = (route: RouteBuilder.RoutePath) => new RouteBuilder(route, "PUT");
+export const Delete = (route: RouteBuilder.RoutePath) => new RouteBuilder(route, "DELETE");

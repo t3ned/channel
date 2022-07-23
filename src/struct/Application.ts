@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { RoutePath } from "./RouteBuilder";
+import type { RouteBuilder } from "./RouteBuilder";
 
 import { ApplicationLoader } from "./ApplicationLoader";
 import { Class, isClass } from "../utils";
@@ -34,7 +34,7 @@ export class Application {
 	/**
 	 * The route prefix
 	 */
-	public static routePrefix: RoutePath = "/api";
+	public static routePrefix: RouteBuilder.RoutePath = "/api";
 
 	/**
 	 * The default route version
@@ -49,7 +49,7 @@ export class Application {
 	/**
 	 * The contexts to pass to route handlers
 	 */
-	public contexts: ContextObj<unknown> = {};
+	public contexts: Application.ObjectContext<unknown> = {};
 
 	/**
 	 * Create an instance of an fastify application
@@ -75,7 +75,7 @@ export class Application {
 	 *
 	 * @returns The application
 	 */
-	public setRoutePrefix(routePrefix: RoutePath): this {
+	public setRoutePrefix(routePrefix: RouteBuilder.RoutePath): this {
 		Application.routePrefix = routePrefix;
 
 		return this;
@@ -112,7 +112,7 @@ export class Application {
 	 *
 	 * @returns The application
 	 */
-	public addContext<T>(contextName: string, context: Context<T>): this {
+	public addContext<T>(contextName: string, context: Application.Context<T>): this {
 		this.contexts[contextName] = context;
 
 		return this;
@@ -125,7 +125,7 @@ export class Application {
 	 *
 	 * @returns The application
 	 */
-	public addClassContext<T>(contextName: string, context: ContextClass<T>): this {
+	public addClassContext<T>(contextName: string, context: Application.ClassContext<T>): this {
 		if (isClass(context)) return this.addContext(contextName, new context());
 		if (!this.contexts[contextName] || typeof this.contexts[contextName] !== "object")
 			this.contexts[contextName] = {};
@@ -162,6 +162,8 @@ export class Application {
 	}
 }
 
-export type ContextObj<T> = { [k: string]: T };
-export type Context<T> = ContextObj<T> | T;
-export type ContextClass<T> = ContextObj<Class<T>> | Class<T>;
+export namespace Application {
+	export type Context<T> = ObjectContext<T> | T;
+	export type ClassContext<T> = ObjectContext<Class<T>> | Class<T>;
+	export type ObjectContext<T> = { [k: string]: T };
+}
