@@ -24,6 +24,7 @@
 
 ```ts
 // index.ts
+
 import { Application } from "@t3ned/channel";
 import fastify from "fastify";
 
