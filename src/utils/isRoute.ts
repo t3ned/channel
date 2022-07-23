@@ -1,4 +1,4 @@
-import { BaseRouteBuilder } from "../base";
+import { RouteBuilder } from "../struct/RouteBuilder";
 
 /**
  * Check whether a value is a route
@@ -6,6 +6,6 @@ import { BaseRouteBuilder } from "../base";
  *
  * @returns Whether the value is a route
  */
-export const isRoute = (value: unknown): value is BaseRouteBuilder => {
-	return value instanceof BaseRouteBuilder;
+export const isRoute = (value: unknown): value is RouteBuilder => {
+	return value instanceof RouteBuilder;
 };

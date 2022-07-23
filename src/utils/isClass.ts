@@ -1,4 +1,4 @@
-import type { ContextConstructor } from "../base";
+import type { ContextConstructor } from "../struct/Application";
 
 /**
  * Check whether a value is a class
