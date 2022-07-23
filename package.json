@@ -5,7 +5,7 @@
 	"typings": "dist/index.d.ts",
 	"author": "T3NED <oss@t3ned.dev>",
 	"license": "Apache-2.0",
-	"description": "Ergonomic, chaining-based Typescript framework for quick API development for Express and Fastify",
+	"description": "Ergonomic, chaining-based Typescript framework for quick API development for Fastify",
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:T3NED/channel.git"
@@ -26,8 +26,7 @@
 		"api",
 		"rest",
 		"minimal",
-		"fastify",
-		"express"
+		"fastify"
 	],
 	"scripts": {
 		"format": "npx prettier --write src",
