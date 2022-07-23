@@ -5,7 +5,7 @@
 	"typings": "dist/index.d.ts",
 	"author": "T3NED <oss@t3ned.dev>",
 	"license": "Apache-2.0",
-	"description": "Ergonomic, chaining-based Typescript framework for quick API development for Express and Fastify",
+	"description": "Ergonomic, chaining-based Typescript framework for quick API development for Fastify",
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:T3NED/channel.git"
@@ -26,8 +26,7 @@
 		"api",
 		"rest",
 		"minimal",
-		"fastify",
-		"express"
+		"fastify"
 	],
 	"scripts": {
 		"format": "npx prettier --write src",
@@ -36,11 +35,6 @@
 		"lint": "npx eslint src --fix",
 		"test": "npx vitest run --coverage",
 		"watch:test": "npx vitest --coverage"
-	},
-	"optionalDependencies": {
-		"@types/express": "^4.17.13",
-		"express": "^4.18.1",
-		"fastify": "^4.2.1"
 	},
 	"devDependencies": {
 		"@types/node": "^18.0.5",
@@ -54,5 +48,8 @@
 		"prettier": "^2.7.1",
 		"typescript": "^4.7.4",
 		"vitest": "^0.18.1"
+	},
+	"dependencies": {
+		"fastify": "^4.3.0"
 	}
 }

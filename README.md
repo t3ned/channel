@@ -10,23 +10,23 @@
 <br>
 <br>
 
-**Ergonomic, chaining-based Typescript framework for quick API development for Express and Fastify**
+**Ergonomic, chaining-based Typescript framework for quick API development for Fastify**
 
 </div>
 
 ## Installation
 
 ```shell
-> pnpm add channel
+> pnpm add @t3ned/channel
 ```
 
 ## Usage
 
 ```ts
-import { Application } from "channel/express";
-import express from "express";
+import { Application } from "@t3ned/channel";
+import fastify from "fastify";
 
-const server = express();
+const server = fastify();
 const app = new Application(server)
 	.setRouteDirPath(__dirname, "api")
 	.setRoutePrefix("/api")

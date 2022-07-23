@@ -1,18 +1,20 @@
-import type { BaseApplicationLoader } from "./BaseApplicationLoader";
-import type { RoutePath } from "./BaseRouteBuilder";
-import { isClass } from "../utils";
+import type { FastifyInstance } from "fastify";
+import type { RoutePath } from "./RouteBuilder";
+
+import { ApplicationLoader } from "./ApplicationLoader";
+import { Class, isClass } from "../utils";
 import { join } from "path";
 
-export abstract class BaseApplication<S> {
+export class Application {
 	/**
-	 * The express server
+	 * The fastify server
 	 */
-	public server!: S;
+	public server!: FastifyInstance;
 
 	/**
 	 * The application file loader
 	 */
-	public abstract loader: BaseApplicationLoader<S>;
+	public loader: ApplicationLoader = new ApplicationLoader(this);
 
 	/**
 	 * The path to the API routes folder
@@ -55,10 +57,10 @@ export abstract class BaseApplication<S> {
 	public contexts: ContextObj<unknown> = {};
 
 	/**
-	 * Create an instance of an express application
-	 * @param server The express server
+	 * Create an instance of an fastify application
+	 * @param server The fastify server
 	 */
-	public constructor(server: S) {
+	public constructor(server: FastifyInstance) {
 		Reflect.defineProperty(this, "server", { value: server, enumerable: false });
 	}
 
@@ -79,7 +81,7 @@ export abstract class BaseApplication<S> {
 	 * @returns The application
 	 */
 	public setRoutePrefix(routePrefix: RoutePath): this {
-		BaseApplication.routePrefix = routePrefix;
+		Application.routePrefix = routePrefix;
 
 		return this;
 	}
@@ -91,7 +93,7 @@ export abstract class BaseApplication<S> {
 	 * @returns The application
 	 */
 	public setDefaultVersion(version: number): this {
-		BaseApplication.defaultVersion = version;
+		Application.defaultVersion = version;
 
 		return this;
 	}
@@ -103,7 +105,7 @@ export abstract class BaseApplication<S> {
 	 * @returns The application
 	 */
 	public setDefaultVersionPrefix(prefix: string): this {
-		BaseApplication.defaultVersionPrefix = prefix;
+		Application.defaultVersionPrefix = prefix;
 
 		return this;
 	}
@@ -115,7 +117,7 @@ export abstract class BaseApplication<S> {
 	 * @returns The application
 	 */
 	public setDefaultMiddlewareOrder(order: MiddlewareOrder): this {
-		BaseApplication.defaultMiddlewareOrder = order;
+		Application.defaultMiddlewareOrder = order;
 
 		return this;
 	}
@@ -156,7 +158,7 @@ export abstract class BaseApplication<S> {
 	 * The default version slug
 	 */
 	public static get defaultVersionSlug(): string {
-		return `${BaseApplication.defaultVersionPrefix}${BaseApplication.defaultVersion}`;
+		return `${Application.defaultVersionPrefix}${Application.defaultVersion}`;
 	}
 
 	/**
@@ -166,12 +168,19 @@ export abstract class BaseApplication<S> {
 	 *
 	 * @returns The application
 	 */
-	public abstract listen(port: number, host?: string): Promise<this>;
+	public async listen(port: number, host?: string): Promise<this> {
+		this.port = port;
+		this.host = host;
+
+		await this.loader.loadRoutes();
+		await this.server.listen({ port, host });
+
+		return this;
+	}
 }
 
 export type MiddlewareOrder = "pre" | "post";
 
-export type ContextConstructor<T> = new () => T;
 export type ContextObj<T> = { [k: string]: T };
 export type Context<T> = ContextObj<T> | T;
-export type ContextClass<T> = ContextObj<ContextConstructor<T>> | ContextConstructor<T>;
+export type ContextClass<T> = ContextObj<Class<T>> | Class<T>;

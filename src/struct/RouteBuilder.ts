@@ -1,8 +1,11 @@
-export abstract class BaseRouteBuilder<Middleware = unknown> {
+import type { RouteHandlerMethod } from "fastify";
+import { Application } from "./Application";
+
+export class RouteBuilder {
 	/**
 	 * The version slugs for the route
 	 */
-	public abstract _versions: string[];
+	public _versions: string[] = [];
 
 	/**
 	 * The middleware executed before the handler
@@ -17,7 +20,9 @@ export abstract class BaseRouteBuilder<Middleware = unknown> {
 	/**
 	 * The route handler
 	 */
-	public abstract _handler: unknown;
+	public _handler: Handler = () => {
+		throw new Error("Handler not implemented");
+	};
 
 	/**
 	 * @param route The route path
@@ -32,7 +37,11 @@ export abstract class BaseRouteBuilder<Middleware = unknown> {
 	 *
 	 * @returns The route builder
 	 */
-	public abstract version(version: number, prefix?: string): this;
+	public version(version: number, prefix = Application.defaultVersionPrefix): this {
+		this._versions.push(`${prefix ?? ""}${version}`);
+
+		return this;
+	}
 
 	/**
 	 * Add a middleware before the handler
@@ -64,7 +73,16 @@ export abstract class BaseRouteBuilder<Middleware = unknown> {
 	 *
 	 * @returns the route builder
 	 */
-	public abstract middleware(...middleware: Middleware[]): this;
+	public middleware(...middleware: Middleware[]): this {
+		if (Application.defaultMiddlewareOrder === "pre") {
+			this._preMiddleware.push(...middleware);
+			return this;
+		}
+
+		this._postMiddleware.push(...middleware);
+
+		return this;
+	}
 
 	/**
 	 * Set the handler for the route
@@ -72,8 +90,20 @@ export abstract class BaseRouteBuilder<Middleware = unknown> {
 	 *
 	 * @returns The route builder
 	 */
-	public abstract handler(handler: unknown): this;
+	public handler(handler: Handler): this {
+		this._handler = handler;
+
+		return this;
+	}
 }
 
+export const Get = (route: RoutePath) => new RouteBuilder(route, "get");
+export const Post = (route: RoutePath) => new RouteBuilder(route, "post");
+export const Patch = (route: RoutePath) => new RouteBuilder(route, "patch");
+export const Put = (route: RoutePath) => new RouteBuilder(route, "put");
+export const Delete = (route: RoutePath) => new RouteBuilder(route, "delete");
+
+export type Middleware = RouteHandlerMethod;
+export type Handler = RouteHandlerMethod;
 export type RoutePath = `/${string}`;
 export type RouteMethod = "get" | "post" | "patch" | "put" | "delete";

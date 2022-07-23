@@ -1,14 +1,15 @@
-import type { BaseApplication } from "./BaseApplication";
-import type { BaseRouteBuilder } from "./BaseRouteBuilder";
-import { buildRoutePath, isRoute } from "../utils";
+import type { HTTPMethods } from "fastify";
+import type { Handler, Middleware, RouteBuilder } from "./RouteBuilder";
+import { Application } from "./Application";
+import { buildRoutePath, isRouteBuilder } from "../utils";
 import { readdir } from "fs/promises";
 import { extname } from "path";
 
-export abstract class BaseApplicationLoader<S> {
+export class ApplicationLoader {
 	/**
 	 * @param application The API application
 	 */
-	public constructor(public application: BaseApplication<S>) {}
+	public constructor(public application: Application) {}
 
 	/**
 	 * Load all the routes
@@ -17,7 +18,7 @@ export abstract class BaseApplicationLoader<S> {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
 			const routePath = path.slice(this._apiPath.length, -extname(path).length);
-			const routes = Object.values(mod).filter((route) => isRoute(route)) as BaseRouteBuilder[];
+			const routes = Object.values(mod).filter((route) => isRouteBuilder(route)) as RouteBuilder[];
 
 			if (routes.length)
 				await this.loadRoute(
@@ -33,7 +34,29 @@ export abstract class BaseApplicationLoader<S> {
 	 * Load a route file
 	 * @param builders The routes
 	 */
-	public abstract loadRoute(builders: BaseRouteBuilder[]): Promise<void>;
+	public async loadRoute(builders: RouteBuilder[]): Promise<void> {
+		const versionedRoutes = builders.flatMap((builder) => {
+			const versions = [...builder._versions];
+			if (!versions.length) versions.push(Application.defaultVersionSlug);
+
+			return versions.map((version) => ({
+				method: builder.method,
+				route: buildRoutePath(Application.routePrefix, version, builder.route),
+				handler: builder._handler as Handler,
+				preMiddleware: builder._preMiddleware as Middleware[],
+				postMiddleware: builder._postMiddleware as Middleware[],
+			}));
+		});
+
+		for (const { method, route, handler } of versionedRoutes) {
+			// TODO: add middleware
+			this.application.server.route({
+				method: method.toUpperCase() as HTTPMethods,
+				url: route,
+				handler,
+			});
+		}
+	}
 
 	/**
 	 * Recursively read all the file paths in a given path
