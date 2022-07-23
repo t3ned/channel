@@ -1,7 +1,7 @@
 import type { HTTPMethods } from "fastify";
 import type { Handler, Middleware, RouteBuilder } from "./RouteBuilder";
 import { Application } from "./Application";
-import { buildRoutePath, isRoute } from "../utils";
+import { buildRoutePath, isRouteBuilder } from "../utils";
 import { readdir } from "fs/promises";
 import { extname } from "path";
 
@@ -18,7 +18,7 @@ export class ApplicationLoader {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
 			const routePath = path.slice(this._apiPath.length, -extname(path).length);
-			const routes = Object.values(mod).filter((route) => isRoute(route)) as RouteBuilder[];
+			const routes = Object.values(mod).filter((route) => isRouteBuilder(route)) as RouteBuilder[];
 
 			if (routes.length)
 				await this.loadRoute(
