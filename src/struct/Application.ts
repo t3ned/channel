@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { RoutePath } from "./RouteBuilder";
 
 import { ApplicationLoader } from "./ApplicationLoader";
-import { isClass } from "../utils";
+import { Class, isClass } from "../utils";
 import { join } from "path";
 
 export class Application {
@@ -181,7 +181,6 @@ export class Application {
 
 export type MiddlewareOrder = "pre" | "post";
 
-export type ContextConstructor<T> = new () => T;
 export type ContextObj<T> = { [k: string]: T };
 export type Context<T> = ContextObj<T> | T;
-export type ContextClass<T> = ContextObj<ContextConstructor<T>> | ContextConstructor<T>;
+export type ContextClass<T> = ContextObj<Class<T>> | Class<T>;
