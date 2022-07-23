@@ -23,18 +23,42 @@
 ## Usage
 
 ```ts
+// index.ts
 import { Application } from "@t3ned/channel";
 import fastify from "fastify";
+
+process.env.AUTHORIZATION_HEADER = "example";
 
 const server = fastify();
 const app = new Application(server)
 	.setRouteDirPath(__dirname, "api")
 	.setRoutePrefix("/api")
 	.setDefaultVersionPrefix("v")
-	.setDefaultVersion(1)
-	.setDefaultMiddlewareOrder("pre");
+	.setDefaultVersion(1);
 
 app.listen(3000, "0.0.0.0")
 	.then(() => console.log(`Listening on port ${app.port}`))
 	.catch((error) => console.error(error));
+```
+
+```ts
+// api/example.ts
+
+import { Get } from "@t3ned/channel";
+
+export const helloWorld = Get("/")
+	.version(1)
+	.preHandler((req, reply, done) => {
+		const { authorization } = req.headers;
+		if (authorization !== process.env.AUTHORIZATION_HEADER) {
+			return reply.status(401).send({ code: 0, message: "Unauthorized" });
+		}
+
+		return done();
+	})
+	.handle((req, reply) => {
+		return reply.send({
+			hello: "world",
+		});
+	});
 ```
