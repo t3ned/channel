@@ -1,5 +1,4 @@
-import type { HTTPMethods } from "fastify";
-import type { Handler, Middleware, RouteBuilder } from "./RouteBuilder";
+import type { RouteBuilder } from "./RouteBuilder";
 import { Application } from "./Application";
 import { buildRoutePath, isRouteBuilder } from "../utils";
 import { readdir } from "fs/promises";
@@ -23,7 +22,7 @@ export class ApplicationLoader {
 			if (routes.length)
 				await this.loadRoute(
 					routes.map((route) => {
-						route.route = buildRoutePath(routePath, route.route);
+						route.path = buildRoutePath(routePath, route.path);
 						return route;
 					}),
 				);
@@ -36,24 +35,39 @@ export class ApplicationLoader {
 	 */
 	public async loadRoute(builders: RouteBuilder[]): Promise<void> {
 		const versionedRoutes = builders.flatMap((builder) => {
-			const versions = [...builder._versions];
+			const versions = [...builder.versions];
 			if (!versions.length) versions.push(Application.defaultVersionSlug);
 
 			return versions.map((version) => ({
 				method: builder.method,
-				route: buildRoutePath(Application.routePrefix, version, builder.route),
-				handler: builder._handler as Handler,
-				preMiddleware: builder._preMiddleware as Middleware[],
-				postMiddleware: builder._postMiddleware as Middleware[],
+				path: buildRoutePath(Application.routePrefix, version, builder.path),
+				handler: builder._handler,
+				onRequest: builder.onRequestHook,
+				preParsing: builder.preParsingHook,
+				preValidation: builder.preValidationHook,
+				preHandler: builder.preHandlerHook,
+				preSerialization: builder.preSerializationHook,
+				onSend: builder.onSendHook,
+				onResponse: builder.onResponseHook,
+				onTimeout: builder.onTimeoutHook,
+				onError: builder.onErrorHook,
 			}));
 		});
 
-		for (const { method, route, handler } of versionedRoutes) {
-			// TODO: add middleware
+		for (const route of versionedRoutes) {
 			this.application.server.route({
-				method: method.toUpperCase() as HTTPMethods,
-				url: route,
-				handler,
+				method: route.method,
+				url: route.path,
+				handler: route.handler,
+				onRequest: route.onRequest,
+				preParsing: route.preParsing,
+				preValidation: route.preValidation,
+				preHandler: route.preHandler,
+				preSerialization: route.preSerialization,
+				onSend: route.onSend,
+				onResponse: route.onResponse,
+				onTimeout: route.onTimeout,
+				onError: route.onError,
 			});
 		}
 	}

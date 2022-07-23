@@ -1,34 +1,84 @@
-import type { RouteHandlerMethod } from "fastify";
+import type {
+	RouteHandlerMethod,
+	HTTPMethods,
+	onRequestAsyncHookHandler,
+	preParsingAsyncHookHandler,
+	preValidationAsyncHookHandler,
+	preHandlerAsyncHookHandler,
+	preSerializationAsyncHookHandler,
+	onSendAsyncHookHandler,
+	onResponseAsyncHookHandler,
+	onTimeoutAsyncHookHandler,
+	onErrorAsyncHookHandler,
+	onReadyAsyncHookHandler,
+	onCloseAsyncHookHandler,
+} from "fastify";
+
 import { Application } from "./Application";
 
 export class RouteBuilder {
 	/**
 	 * The version slugs for the route
 	 */
-	public _versions: string[] = [];
+	public versions: string[] = [];
 
 	/**
-	 * The middleware executed before the handler
+	 * The onRequest hook for the route
 	 */
-	public _preMiddleware: Middleware[] = [];
+	public onRequestHook?: onRequestAsyncHookHandler;
 
 	/**
-	 * The middleware executed after the handler
+	 * The preParsing hook for the route
 	 */
-	public _postMiddleware: Middleware[] = [];
+	public preParsingHook?: preParsingAsyncHookHandler;
+
+	/**
+	 * The preValidation hook for the route
+	 */
+	public preValidationHook?: preValidationAsyncHookHandler;
+
+	/**
+	 * The preHandler hook for the route
+	 */
+	public preHandlerHook?: preHandlerAsyncHookHandler;
+
+	/**
+	 * The preSerialization hook for the route
+	 */
+	public preSerializationHook?: preSerializationAsyncHookHandler<unknown>;
+
+	/**
+	 * The onSend hook for the route
+	 */
+	public onSendHook?: onSendAsyncHookHandler<unknown>;
+
+	/**
+	 * The onResponse hook for the route
+	 */
+	public onResponseHook?: onResponseAsyncHookHandler;
+
+	/**
+	 * The onTimeout hook for the route
+	 */
+	public onTimeoutHook?: onTimeoutAsyncHookHandler;
+
+	/**
+	 * The onError hook for the route
+	 */
+	public onErrorHook?: onErrorAsyncHookHandler;
 
 	/**
 	 * The route handler
 	 */
-	public _handler: Handler = () => {
+	public _handler: RouteHandlerMethod = () => {
 		throw new Error("Handler not implemented");
 	};
 
 	/**
-	 * @param route The route path
+	 * @param path The route path
 	 * @param method The route method
 	 */
-	public constructor(public route: RoutePath, public method: RouteMethod) {}
+	public constructor(public path: RoutePath, public method: HTTPMethods) {}
 
 	/**
 	 * Add a supported version to the route
@@ -38,48 +88,95 @@ export class RouteBuilder {
 	 * @returns The route builder
 	 */
 	public version(version: number, prefix = Application.defaultVersionPrefix): this {
-		this._versions.push(`${prefix ?? ""}${version}`);
+		this.versions.push(`${prefix ?? ""}${version}`);
+
+		return this;
+	}
+	/**
+	 * Define the onRequest hook for the route
+	 * @param handler The hook handler
+	 */
+	public onRequest(handler: onRequestAsyncHookHandler): this {
+		this.onRequestHook = handler;
+
+		return this;
+	}
+	/**
+	 * Define the preParsing hook for the route
+	 * @param handler The hook handler
+	 */
+	public preParsing(handler: preParsingAsyncHookHandler): this {
+		this.preParsingHook = handler;
 
 		return this;
 	}
 
 	/**
-	 * Add a middleware before the handler
-	 * @param middleware The middleware to add
-	 *
-	 * @returns the route builder
+	 * Define the preValidation hook for the route
+	 * @param handler The hook handler
 	 */
-	public preMiddleware(...middleware: Middleware[]): this {
-		this._preMiddleware.push(...middleware);
+	public preValidation(handler: preValidationAsyncHookHandler): this {
+		this.preValidationHook = handler;
 
 		return this;
 	}
 
 	/**
-	 * Add a middleware after the handler
-	 * @param middleware The middleware to add
-	 *
-	 * @returns the route builder
+	 * Define the preHandler hook for the route
+	 * @param handler The hook handler
 	 */
-	public postMiddleware(...middleware: Middleware[]): this {
-		this._postMiddleware.push(...middleware);
+	public preHandler(handler: preHandlerAsyncHookHandler): this {
+		this.preHandlerHook = handler;
 
 		return this;
 	}
 
 	/**
-	 * Add a middleware in the default order
-	 * @param middleware The middleware to add
-	 *
-	 * @returns the route builder
+	 * Define the preSerialization hook for the route
+	 * @param handler The hook handler
 	 */
-	public middleware(...middleware: Middleware[]): this {
-		if (Application.defaultMiddlewareOrder === "pre") {
-			this._preMiddleware.push(...middleware);
-			return this;
-		}
+	public preSerialization<Payload>(handler: preSerializationAsyncHookHandler<Payload>): this {
+		this.preSerializationHook = handler;
 
-		this._postMiddleware.push(...middleware);
+		return this;
+	}
+
+	/**
+	 * Define the onSend hook for the route
+	 * @param handler The hook handler
+	 */
+	public onSend<Payload>(handler: onSendAsyncHookHandler<Payload>): this {
+		this.onSendHook = handler;
+
+		return this;
+	}
+
+	/**
+	 * Define the onResponse hook for the route
+	 * @param handler The hook handler
+	 */
+	public onResponse(handler: onResponseAsyncHookHandler): this {
+		this.onResponseHook = handler;
+
+		return this;
+	}
+
+	/**
+	 * Define the onTimeout hook for the route
+	 * @param handler The hook handler
+	 */
+	public onTimeout(handler: onTimeoutAsyncHookHandler): this {
+		this.onTimeoutHook = handler;
+
+		return this;
+	}
+
+	/**
+	 * Define the onError hook for the route
+	 * @param handler The hook handler
+	 */
+	public onError(handler: onErrorAsyncHookHandler): this {
+		this.onErrorHook = handler;
 
 		return this;
 	}
@@ -90,20 +187,30 @@ export class RouteBuilder {
 	 *
 	 * @returns The route builder
 	 */
-	public handler(handler: Handler): this {
+	public handle(handler: RouteHandlerMethod): this {
 		this._handler = handler;
 
 		return this;
 	}
 }
 
-export const Get = (route: RoutePath) => new RouteBuilder(route, "get");
-export const Post = (route: RoutePath) => new RouteBuilder(route, "post");
-export const Patch = (route: RoutePath) => new RouteBuilder(route, "patch");
-export const Put = (route: RoutePath) => new RouteBuilder(route, "put");
-export const Delete = (route: RoutePath) => new RouteBuilder(route, "delete");
+export const Get = (route: RoutePath) => new RouteBuilder(route, "GET");
+export const Post = (route: RoutePath) => new RouteBuilder(route, "POST");
+export const Patch = (route: RoutePath) => new RouteBuilder(route, "PATCH");
+export const Put = (route: RoutePath) => new RouteBuilder(route, "PUT");
+export const Delete = (route: RoutePath) => new RouteBuilder(route, "DELETE");
 
-export type Middleware = RouteHandlerMethod;
-export type Handler = RouteHandlerMethod;
 export type RoutePath = `/${string}`;
-export type RouteMethod = "get" | "post" | "patch" | "put" | "delete";
+
+export type Hook =
+	| onRequestAsyncHookHandler
+	| preParsingAsyncHookHandler
+	| preValidationAsyncHookHandler
+	| preHandlerAsyncHookHandler
+	| preSerializationAsyncHookHandler<unknown>
+	| onSendAsyncHookHandler<unknown>
+	| onResponseAsyncHookHandler
+	| onTimeoutAsyncHookHandler
+	| onErrorAsyncHookHandler
+	| onReadyAsyncHookHandler
+	| onCloseAsyncHookHandler;
