@@ -13,9 +13,11 @@ specifiers:
   prettier: ^2.7.1
   typescript: ^4.7.4
   vitest: ^0.18.1
+  zod: ^3.17.10
 
 dependencies:
   fastify: 4.3.0
+  zod: 3.17.10
 
 devDependencies:
   '@types/node': 18.0.5
@@ -1862,3 +1864,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod/3.17.10:
+    resolution: {integrity: sha512-IHXnQYQuOOOL/XgHhgl8YjNxBHi3xX0mVcHmqsvJgcxKkEczPshoWdxqyFwsARpf41E0v9U95WUROqsHHxt0UQ==}
+    dev: false
