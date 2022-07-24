@@ -174,6 +174,7 @@ export class Application {
 		this.port = port;
 		this.host = host;
 
+		await this.loader.loadEnv();
 		await this.loader.loadRoutes();
 		await this.server.listen({ port, host });
 

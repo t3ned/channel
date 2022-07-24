@@ -1,7 +1,7 @@
 import type { RouteBuilder } from "./RouteBuilder";
 import { Application } from "./Application";
 import { buildRoutePath, isRouteBuilder } from "../utils";
-import { readdir } from "fs/promises";
+import { readdir, readFile } from "fs/promises";
 import { extname } from "path";
 import { ChannelError } from "../errors";
 
@@ -14,7 +14,7 @@ export class ApplicationLoader {
 	/**
 	 * Load all the routes
 	 */
-	public async loadRoutes() {
+	public async loadRoutes(): Promise<void> {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
 			const routePath = path.slice(this._apiPath.length, -extname(path).length);
@@ -70,6 +70,23 @@ export class ApplicationLoader {
 				onTimeout: route.onTimeout,
 				onError: route.onError,
 			});
+		}
+	}
+
+	/**
+	 * Load the env file
+	 */
+	public async loadEnv(): Promise<void> {
+		if (!this.application.envFilePath) return;
+
+		const mod = await readFile(this.application.envFilePath, "utf-8").catch(() => "");
+		const lines = mod.split("\n");
+
+		for (const line of lines) {
+			const [key, value] = line.split(/=(.*)/s).map((part) => part.trim());
+			if (!key || key.startsWith("#") || typeof value !== "string") continue;
+
+			Reflect.defineProperty(process.env, key, { value });
 		}
 	}
 
