@@ -1,6 +1,6 @@
 {
 	"name": "@t3ned/channel",
-	"version": "1.1.1-beta",
+	"version": "1.1.2-beta",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
 	"author": "T3NED <oss@t3ned.dev>",
