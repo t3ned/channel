@@ -1,9 +1,11 @@
+import type { FastifyReply, FastifyRequest } from "fastify";
 import type { RouteBuilder } from "./RouteBuilder";
+import { buildRoutePath, isRouteBuilder, validate } from "../../utils";
 import { Application } from "./Application";
-import { buildRoutePath, isRouteBuilder } from "../../utils";
+import { ChannelError } from "../../errors";
+import { HttpStatus } from "../constants";
 import { readdir, readFile } from "fs/promises";
 import { extname } from "path";
-import { ChannelError } from "../../errors";
 
 export class ApplicationLoader {
 	/**
@@ -42,6 +44,9 @@ export class ApplicationLoader {
 			return versions.map((version) => ({
 				method: builder.method,
 				path: buildRoutePath(Application.routePrefix, version, builder.path),
+				paramsValidationSchema: builder.paramsValidationSchema,
+				queryValidationSchema: builder.queryValidationSchema,
+				bodyValidationSchema: builder.bodyValidationSchema,
 				handler: builder._handler,
 				onRequest: builder.onRequestHook,
 				preParsing: builder.preParsingHook,
@@ -56,10 +61,25 @@ export class ApplicationLoader {
 		});
 
 		for (const route of versionedRoutes) {
+			const handler = (req: FastifyRequest, reply: FastifyReply) => {
+				const validated = validate(req, {
+					params: route.paramsValidationSchema,
+					query: route.queryValidationSchema,
+					body: route.bodyValidationSchema,
+				});
+
+				if (validated.success) {
+					const parsed = validated.data as RouteBuilder.ValidatedInput;
+					return route.handler({ req, reply, parsed });
+				}
+
+				return reply.status(HttpStatus.BadRequest).send(validated.error.format());
+			};
+
 			this.application.server.route({
 				method: route.method,
 				url: route.path,
-				handler: route.handler,
+				handler,
 				onRequest: route.onRequest,
 				preParsing: route.preParsing,
 				preValidation: route.preValidation,

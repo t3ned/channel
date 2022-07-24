@@ -1,6 +1,6 @@
 {
 	"name": "@t3ned/channel",
-	"version": "1.1.0-beta",
+	"version": "1.1.1-beta",
 	"main": "dist/index.js",
 	"typings": "dist/index.d.ts",
 	"author": "T3NED <oss@t3ned.dev>",
@@ -50,6 +50,7 @@
 		"vitest": "^0.18.1"
 	},
 	"dependencies": {
-		"fastify": "^4.3.0"
+		"fastify": "^4.3.0",
+		"zod": "^3.17.10"
 	}
 }
