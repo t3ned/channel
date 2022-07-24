@@ -18,7 +18,11 @@ import { ChannelError } from "../../errors/ChannelError";
 import { Application } from "./Application";
 import type { z, ZodObject, ZodRawShape } from "zod";
 
-export class RouteBuilder<Params extends ZodRawShape, Query extends ZodRawShape, Body extends ZodRawShape> {
+export class RouteBuilder<
+	Params extends ZodRawShape = ZodRawShape,
+	Query extends ZodRawShape = ZodRawShape,
+	Body extends ZodRawShape = ZodRawShape,
+> {
 	/**
 	 * The version slugs for the route
 	 */
