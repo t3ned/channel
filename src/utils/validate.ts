@@ -1,5 +1,5 @@
 import type { FastifyRequest } from "fastify";
-import { z, AnyZodObject } from "zod";
+import { z, ZodTypeAny } from "zod";
 
 export const validate = (req: FastifyRequest, schema: Partial<ValidationSchema>) => {
 	// remove entries with undefined values
@@ -20,5 +20,5 @@ export const validate = (req: FastifyRequest, schema: Partial<ValidationSchema>)
 };
 
 export type ValidationKey = "params" | "query" | "body";
-export type ValidationSchema = Record<ValidationKey, AnyZodObject>;
+export type ValidationSchema = Record<ValidationKey, ZodTypeAny>;
 export type RequestData = Pick<FastifyRequest, ValidationKey>;
