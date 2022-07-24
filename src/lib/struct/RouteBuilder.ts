@@ -14,7 +14,7 @@ import type {
 	onCloseHookHandler,
 } from "fastify";
 
-import { ChannelError } from "../errors/ChannelError";
+import { ChannelError } from "../../errors/ChannelError";
 import { Application } from "./Application";
 
 export class RouteBuilder {

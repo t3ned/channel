@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { RouteBuilder } from "./RouteBuilder";
 
 import { ApplicationLoader } from "./ApplicationLoader";
-import { Class, isClass } from "../utils";
+import { Class, isClass } from "../../utils";
 import { join } from "path";
 
 export class Application {
@@ -20,6 +20,11 @@ export class Application {
 	 * The path to the API routes folder
 	 */
 	public routeDirPath?: string;
+
+	/**
+	 * The path to the env file
+	 */
+	public envFilePath?: string;
 
 	/**
 	 * The host to bind
@@ -62,9 +67,23 @@ export class Application {
 	/**
 	 * Set the path where the API routes are located
 	 * @param path The API route path
+	 *
+	 * @returns The application
 	 */
 	public setRouteDirPath(...path: string[]): this {
 		this.routeDirPath = join(...path);
+
+		return this;
+	}
+
+	/**
+	 * Set the env file path
+	 * @param path The env file path
+	 *
+	 * @returns The application
+	 */
+	public setEnvFilePath(...path: string[]): this {
+		this.envFilePath = join(...path);
 
 		return this;
 	}
@@ -155,6 +174,7 @@ export class Application {
 		this.port = port;
 		this.host = host;
 
+		await this.loader.loadEnv();
 		await this.loader.loadRoutes();
 		await this.server.listen({ port, host });
 
