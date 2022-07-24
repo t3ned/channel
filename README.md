@@ -33,6 +33,7 @@ process.env.AUTHORIZATION_HEADER = "example";
 const server = fastify();
 const app = new Application(server)
 	.setRouteDirPath(__dirname, "api")
+	.setEnvFilePath(process.cwd(), ".env")
 	.setRoutePrefix("/api")
 	.setDefaultVersionPrefix("v")
 	.setDefaultVersion(1);
