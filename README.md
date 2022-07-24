@@ -44,14 +44,17 @@ app.listen(3000, "0.0.0.0")
 ```ts
 // api/example.ts
 
-import { Get, env } from "@t3ned/channel";
+import { HttpStatus, Get, env } from "@t3ned/channel";
 
 export const helloWorld = Get("/")
 	.version(1)
 	.preHandler((req, reply, done) => {
 		const { authorization } = req.headers;
 		if (authorization !== env("AUTHORIZATION_HEADER")) {
-			return reply.status(401).send({ code: 0, message: "Unauthorized" });
+			return reply.status(HttpStatus.Unauthorized).send({
+				code: 0,
+				message: "Unauthorized",
+			});
 		}
 
 		return done();
