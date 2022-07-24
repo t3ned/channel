@@ -28,8 +28,6 @@
 import { Application } from "@t3ned/channel";
 import fastify from "fastify";
 
-process.env.AUTHORIZATION_HEADER = "example";
-
 const server = fastify();
 const app = new Application(server)
 	.setRouteDirPath(__dirname, "api")
@@ -46,13 +44,13 @@ app.listen(3000, "0.0.0.0")
 ```ts
 // api/example.ts
 
-import { Get } from "@t3ned/channel";
+import { Get, env } from "@t3ned/channel";
 
 export const helloWorld = Get("/")
 	.version(1)
 	.preHandler((req, reply, done) => {
 		const { authorization } = req.headers;
-		if (authorization !== process.env.AUTHORIZATION_HEADER) {
+		if (authorization !== env("AUTHORIZATION_HEADER")) {
 			return reply.status(401).send({ code: 0, message: "Unauthorized" });
 		}
 
