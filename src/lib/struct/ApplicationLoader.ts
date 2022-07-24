@@ -1,9 +1,9 @@
 import type { RouteBuilder } from "./RouteBuilder";
 import { Application } from "./Application";
-import { buildRoutePath, isRouteBuilder } from "../utils";
+import { buildRoutePath, isRouteBuilder } from "../../utils";
 import { readdir, readFile } from "fs/promises";
 import { extname } from "path";
-import { ChannelError } from "../errors";
+import { ChannelError } from "../../errors";
 
 export class ApplicationLoader {
 	/**

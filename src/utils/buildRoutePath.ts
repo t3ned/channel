@@ -1,4 +1,4 @@
-import type { RouteBuilder } from "../struct/RouteBuilder";
+import type { RouteBuilder } from "../lib";
 
 /**
  * Build a route path

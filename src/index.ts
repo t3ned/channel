@@ -1,3 +1,3 @@
 export * from "./errors";
-export * from "./struct";
+export * from "./lib";
 export * as Utils from "./utils";

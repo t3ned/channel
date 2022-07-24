@@ -1,4 +1,4 @@
-import { RouteBuilder } from "../struct/RouteBuilder";
+import { RouteBuilder } from "../lib";
 
 /**
  * Check whether a value is a RouteBuilder

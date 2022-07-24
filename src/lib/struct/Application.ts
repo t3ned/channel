@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { RouteBuilder } from "./RouteBuilder";
 
 import { ApplicationLoader } from "./ApplicationLoader";
-import { Class, isClass } from "../utils";
+import { Class, isClass } from "../../utils";
 import { join } from "path";
 
 export class Application {
