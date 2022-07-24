@@ -15,14 +15,14 @@ import type {
 	FastifyReply,
 } from "fastify";
 
-import type { z, ZodObject, ZodRawShape } from "zod";
+import type { z, ZodTypeAny } from "zod";
 import { ChannelError } from "../../errors/ChannelError";
 import { Application } from "./Application";
 
 export class RouteBuilder<
-	Params extends ZodRawShape = ZodRawShape,
-	Query extends ZodRawShape = ZodRawShape,
-	Body extends ZodRawShape = ZodRawShape,
+	ParamsSchema extends ZodTypeAny = ZodTypeAny,
+	QuerySchema extends ZodTypeAny = ZodTypeAny,
+	BodySchema extends ZodTypeAny = ZodTypeAny,
 > {
 	/**
 	 * The version slugs for the route
@@ -32,17 +32,17 @@ export class RouteBuilder<
 	/**
 	 * The validation schema for params
 	 */
-	public paramsValidationSchema!: ZodObject<Params>;
+	public paramsValidationSchema!: ParamsSchema;
 
 	/**
 	 * The validation schema for query
 	 */
-	public queryValidationSchema!: ZodObject<Query>;
+	public queryValidationSchema!: QuerySchema;
 
 	/**
 	 * The validation schema for body
 	 */
-	public bodyValidationSchema!: ZodObject<Body>;
+	public bodyValidationSchema!: BodySchema;
 
 	/**
 	 * The onRequest hook for the route
@@ -92,7 +92,7 @@ export class RouteBuilder<
 	/**
 	 * The route handler
 	 */
-	public _handler: RouteBuilder.Handler<Params, Query, Body> = () => {
+	public _handler: RouteBuilder.Handler<ParamsSchema, QuerySchema, BodySchema> = () => {
 		throw new ChannelError("Handler not implemented");
 	};
 
@@ -121,10 +121,10 @@ export class RouteBuilder<
 	 *
 	 * @returns The route builder
 	 */
-	public params<U extends ZodRawShape>(schema: ZodObject<U>): RouteBuilder<U, Query, Body> {
-		this.paramsValidationSchema = schema as unknown as ZodObject<Params>;
+	public params<U extends ZodTypeAny>(schema: U): RouteBuilder<U, QuerySchema, BodySchema> {
+		this.paramsValidationSchema = schema as unknown as ParamsSchema;
 
-		return this as unknown as RouteBuilder<U, Query, Body>;
+		return this as unknown as RouteBuilder<U, QuerySchema, BodySchema>;
 	}
 
 	/**
@@ -133,10 +133,10 @@ export class RouteBuilder<
 	 *
 	 * @returns The route builder
 	 */
-	public query<U extends ZodRawShape>(schema: ZodObject<U>): RouteBuilder<Params, U, Body> {
-		this.queryValidationSchema = schema as unknown as ZodObject<Query>;
+	public query<U extends ZodTypeAny>(schema: U): RouteBuilder<ParamsSchema, U, BodySchema> {
+		this.queryValidationSchema = schema as unknown as QuerySchema;
 
-		return this as unknown as RouteBuilder<Params, U, Body>;
+		return this as unknown as RouteBuilder<ParamsSchema, U, BodySchema>;
 	}
 
 	/**
@@ -145,10 +145,10 @@ export class RouteBuilder<
 	 *
 	 * @returns The route builder
 	 */
-	public body<U extends ZodRawShape>(schema: ZodObject<U>): RouteBuilder<Params, Query, U> {
-		this.bodyValidationSchema = schema as unknown as ZodObject<Body>;
+	public body<U extends ZodTypeAny>(schema: U): RouteBuilder<ParamsSchema, QuerySchema, U> {
+		this.bodyValidationSchema = schema as unknown as BodySchema;
 
-		return this as unknown as RouteBuilder<Params, Query, U>;
+		return this as unknown as RouteBuilder<ParamsSchema, QuerySchema, U>;
 	}
 
 	/**
@@ -247,7 +247,7 @@ export class RouteBuilder<
 	 *
 	 * @returns The route builder
 	 */
-	public handle(handler: RouteBuilder.Handler<Params, Query, Body>): this {
+	public handle(handler: RouteBuilder.Handler<ParamsSchema, QuerySchema, BodySchema>): this {
 		this._handler = handler;
 
 		return this;
@@ -270,23 +270,23 @@ export namespace RouteBuilder {
 		| onCloseHookHandler;
 
 	export interface ValidatedInput<
-		Params extends ZodRawShape = ZodRawShape,
-		Query extends ZodRawShape = ZodRawShape,
-		Body extends ZodRawShape = ZodRawShape,
+		Params extends ZodTypeAny = ZodTypeAny,
+		Query extends ZodTypeAny = ZodTypeAny,
+		Body extends ZodTypeAny = ZodTypeAny,
 	> {
-		params: z.infer<ZodObject<Params>>;
-		query: z.infer<ZodObject<Query>>;
-		body: z.infer<ZodObject<Body>>;
+		params: z.infer<Params>;
+		query: z.infer<Query>;
+		body: z.infer<Body>;
 	}
 
-	export type Handler<Params extends ZodRawShape, Query extends ZodRawShape, Body extends ZodRawShape> = (
+	export type Handler<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> = (
 		ctx: HandlerContext<Params, Query, Body>,
 	) => unknown;
 
 	export interface HandlerContext<
-		Params extends ZodRawShape,
-		Query extends ZodRawShape,
-		Body extends ZodRawShape,
+		Params extends ZodTypeAny,
+		Query extends ZodTypeAny,
+		Body extends ZodTypeAny,
 	> {
 		req: FastifyRequest;
 		reply: FastifyReply;
