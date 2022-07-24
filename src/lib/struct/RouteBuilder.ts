@@ -1,5 +1,4 @@
 import type {
-	RouteHandlerMethod,
 	HTTPMethods,
 	onRequestHookHandler,
 	preParsingHookHandler,
@@ -12,11 +11,13 @@ import type {
 	onErrorHookHandler,
 	onReadyHookHandler,
 	onCloseHookHandler,
+	FastifyRequest,
+	FastifyReply,
 } from "fastify";
 
+import type { z, ZodObject, ZodRawShape } from "zod";
 import { ChannelError } from "../../errors/ChannelError";
 import { Application } from "./Application";
-import type { z, ZodObject, ZodRawShape } from "zod";
 
 export class RouteBuilder<
 	Params extends ZodRawShape = ZodRawShape,
@@ -91,7 +92,7 @@ export class RouteBuilder<
 	/**
 	 * The route handler
 	 */
-	public _handler: RouteHandlerMethod = () => {
+	public _handler: RouteBuilder.Handler<Params, Query, Body> = () => {
 		throw new ChannelError("Handler not implemented");
 	};
 
@@ -246,7 +247,7 @@ export class RouteBuilder<
 	 *
 	 * @returns The route builder
 	 */
-	public handle(handler: RouteHandlerMethod): this {
+	public handle(handler: RouteBuilder.Handler<Params, Query, Body>): this {
 		this._handler = handler;
 
 		return this;
@@ -269,13 +270,27 @@ export namespace RouteBuilder {
 		| onCloseHookHandler;
 
 	export interface ValidatedInput<
-		Params extends ZodRawShape,
-		Query extends ZodRawShape,
-		Body extends ZodRawShape,
+		Params extends ZodRawShape = ZodRawShape,
+		Query extends ZodRawShape = ZodRawShape,
+		Body extends ZodRawShape = ZodRawShape,
 	> {
 		params: z.infer<ZodObject<Params>>;
 		query: z.infer<ZodObject<Query>>;
 		body: z.infer<ZodObject<Body>>;
+	}
+
+	export type Handler<Params extends ZodRawShape, Query extends ZodRawShape, Body extends ZodRawShape> = (
+		ctx: HandlerContext<Params, Query, Body>,
+	) => unknown;
+
+	export interface HandlerContext<
+		Params extends ZodRawShape,
+		Query extends ZodRawShape,
+		Body extends ZodRawShape,
+	> {
+		req: FastifyRequest;
+		reply: FastifyReply;
+		parsed: ValidatedInput<Params, Query, Body>;
 	}
 }
 
