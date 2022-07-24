@@ -22,6 +22,11 @@ export class Application {
 	public routeDirPath?: string;
 
 	/**
+	 * The path to the env file
+	 */
+	public envFilePath?: string;
+
+	/**
 	 * The host to bind
 	 */
 	public host?: string;
@@ -62,9 +67,23 @@ export class Application {
 	/**
 	 * Set the path where the API routes are located
 	 * @param path The API route path
+	 *
+	 * @returns The application
 	 */
 	public setRouteDirPath(...path: string[]): this {
 		this.routeDirPath = join(...path);
+
+		return this;
+	}
+
+	/**
+	 * Set the env file path
+	 * @param path The env file path
+	 *
+	 * @returns The application
+	 */
+	public setEnvFilePath(...path: string[]): this {
+		this.envFilePath = join(...path);
 
 		return this;
 	}
