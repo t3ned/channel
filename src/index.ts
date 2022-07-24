@@ -1,3 +1,4 @@
 export * from "./errors";
 export * from "./lib";
-export * as Utils from "./utils";
+export * from "./utils";
+export * as utils from "./utils";
