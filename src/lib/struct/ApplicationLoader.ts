@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Application } from "./Application";
 import type { Route } from "./Route";
-import { buildRoutePath, isRoute, validate } from "../../utils";
+import { joinRoutePaths, isRoute, validate } from "../../utils";
 import { ChannelError } from "../../errors";
 import { HttpStatus } from "../constants";
 import { readdir, readFile } from "fs/promises";
@@ -25,7 +25,7 @@ export class ApplicationLoader {
 			if (routes.length)
 				await this.loadRoute(
 					routes.map((route) => {
-						route.path = buildRoutePath(routePath, route.path);
+						route.path = joinRoutePaths(routePath, route.path);
 						return route;
 					}),
 				);

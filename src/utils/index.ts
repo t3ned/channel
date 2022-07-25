@@ -1,5 +1,5 @@
 export * from "./isClass";
 export * from "./isUndefined";
 export * from "./isRoute";
-export * from "./buildRoutePath";
+export * from "./joinRoutePaths";
 export * from "./validate";

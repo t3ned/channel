@@ -15,7 +15,7 @@ import type {
 
 import type { z, ZodTypeAny } from "zod";
 import { ChannelError } from "../../errors/ChannelError";
-import { buildRoutePath } from "../../utils";
+import { joinRoutePaths } from "../../utils";
 import { Application } from "./Application";
 
 export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> {
@@ -292,7 +292,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 		if (!versions.length) versions.push(Application.defaultVersionSlug);
 
 		return versions.map((version) => ({
-			path: buildRoutePath(Application.routePrefix, version, this.path),
+			path: joinRoutePaths(Application.routePrefix, version, this.path),
 			method: this._method,
 			paramsSchema: this._paramsSchema,
 			querySchema: this._querySchema,
