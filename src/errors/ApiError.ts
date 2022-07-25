@@ -103,4 +103,23 @@ export class ApiError<ErrorData = unknown> extends ChannelError {
 		if (!this._message) throw new ChannelError("Missing `message` field");
 		return this._message;
 	}
+
+	/**
+	 * @returns Get the JSON representation of the ApiError
+	 */
+	public toJSON(): ApiErrorJson<ErrorData> {
+		return {
+			code: this.code,
+			message: this.message,
+			data: this.data,
+			stack: this.stack,
+		};
+	}
+}
+
+export interface ApiErrorJson<ErrorData> {
+	code?: string | number;
+	message: string;
+	data?: ErrorData;
+	stack?: string;
 }
