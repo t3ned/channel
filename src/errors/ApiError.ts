@@ -65,6 +65,18 @@ export class ApiError<ErrorData = unknown> extends ChannelError {
 	}
 
 	/**
+	 * Set the error stack
+	 * @param stack The stack
+	 *
+	 * @returns The ApiError
+	 */
+	public setStack(stack: string): this {
+		this.stack = stack;
+
+		return this;
+	}
+
+	/**
 	 * Set the error data
 	 * @param data The data
 	 *
