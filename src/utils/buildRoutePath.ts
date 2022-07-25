@@ -1,4 +1,4 @@
-import type { RouteBuilder } from "../lib";
+import type { Route } from "../lib";
 
 /**
  * Build a route path
@@ -6,7 +6,7 @@ import type { RouteBuilder } from "../lib";
  *
  * @returns The route path
  */
-export const buildRoutePath = (...parts: (string | undefined)[]): RouteBuilder.RoutePath => {
+export const buildRoutePath = (...parts: (string | undefined)[]): Route.Path => {
 	let path = parts.reduce((routePath, part) => {
 		if (!part) return routePath;
 		if (!part.startsWith("/")) part = `/${part}`;
@@ -14,5 +14,5 @@ export const buildRoutePath = (...parts: (string | undefined)[]): RouteBuilder.R
 	}, "") as string;
 
 	if (path.endsWith("/")) path = path.slice(0, -1);
-	return path as RouteBuilder.RoutePath;
+	return path as Route.Path;
 };

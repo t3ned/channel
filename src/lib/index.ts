@@ -5,6 +5,6 @@ export * from "./env/resolvers/envInteger";
 export * from "./env/resolvers/envNumber";
 export * from "./struct/Application";
 export * from "./struct/ApplicationLoader";
-export * from "./struct/RouteBuilder";
+export * from "./struct/Route";
 export * from "./constants";
 export * as consts from "./constants";
