@@ -1,6 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { RouteBuilder } from "./RouteBuilder";
-
+import type { Route } from "./Route";
 import { ApplicationLoader } from "./ApplicationLoader";
 import { Class, isClass } from "../../utils";
 import { join } from "path";
@@ -39,7 +38,7 @@ export class Application {
 	/**
 	 * The route prefix
 	 */
-	public static routePrefix: RouteBuilder.RoutePath = "/api";
+	public static routePrefix: Route.Path = "/api";
 
 	/**
 	 * The default route version
@@ -94,7 +93,7 @@ export class Application {
 	 *
 	 * @returns The application
 	 */
-	public setRoutePrefix(routePrefix: RouteBuilder.RoutePath): this {
+	public setRoutePrefix(routePrefix: Route.Path): this {
 		Application.routePrefix = routePrefix;
 
 		return this;
