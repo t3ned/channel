@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { Route } from "./Route";
 import { ApplicationLoader } from "./ApplicationLoader";
-import { Class, isClass } from "../../utils";
+import { Class, convertErrorToApiError, isClass } from "../../utils";
 import { join } from "path";
 
 export class Application {
@@ -24,6 +24,11 @@ export class Application {
 	 * The path to the env file
 	 */
 	public envFilePath?: string;
+
+	/**
+	 * Whether the application is a development instance
+	 */
+	public isDevelopment = true;
 
 	/**
 	 * The host to bind
@@ -61,6 +66,16 @@ export class Application {
 	 */
 	public constructor(server: FastifyInstance) {
 		Reflect.defineProperty(this, "server", { value: server, enumerable: false });
+
+		server.setErrorHandler(async (error, _req, reply) => {
+			const apiError = convertErrorToApiError(error);
+			const apiErrorResponse = {
+				...apiError.toJSON(),
+				stack: this.isDevelopment ? apiError.stack : undefined,
+			};
+
+			return reply.send(apiErrorResponse);
+		});
 	}
 
 	/**
@@ -83,6 +98,18 @@ export class Application {
 	 */
 	public setEnvFilePath(...path: string[]): this {
 		this.envFilePath = join(...path);
+
+		return this;
+	}
+
+	/**
+	 * The NODE_ENV or APP_ENV development environment identifier
+	 * @param identifier The env identifier
+	 *
+	 * @returns The application
+	 */
+	public setDevelopmentEnvName(identifier: string): this {
+		this.isDevelopment = [process.env.NODE_ENV, process.env.APP_ENV].includes(identifier);
 
 		return this;
 	}
