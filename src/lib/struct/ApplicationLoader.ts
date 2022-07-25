@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { RouteBuilder } from "./RouteBuilder";
-import { buildRoutePath, isRouteBuilder, validate } from "../../utils";
-import { Application } from "./Application";
+import type { Application } from "./Application";
+import type { Route } from "./Route";
+import { buildRoutePath, isRoute, validate } from "../../utils";
 import { ChannelError } from "../../errors";
 import { HttpStatus } from "../constants";
 import { readdir, readFile } from "fs/promises";
@@ -20,7 +20,7 @@ export class ApplicationLoader {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
 			const routePath = path.slice(this._apiPath.length, -extname(path).length);
-			const routes = Object.values(mod).filter((route) => isRouteBuilder(route)) as RouteBuilder[];
+			const routes = Object.values(mod).filter((route) => isRoute(route)) as Route.Any[];
 
 			if (routes.length)
 				await this.loadRoute(
@@ -34,42 +34,21 @@ export class ApplicationLoader {
 
 	/**
 	 * Load a route file
-	 * @param builders The routes
+	 * @param routes The routes
 	 */
-	public async loadRoute(builders: RouteBuilder[]): Promise<void> {
-		const versionedRoutes = builders.flatMap((builder) => {
-			const versions = [...builder.versions];
-			if (!versions.length) versions.push(Application.defaultVersionSlug);
-
-			return versions.map((version) => ({
-				method: builder.method,
-				path: buildRoutePath(Application.routePrefix, version, builder.path),
-				paramsValidationSchema: builder.paramsValidationSchema,
-				queryValidationSchema: builder.queryValidationSchema,
-				bodyValidationSchema: builder.bodyValidationSchema,
-				handler: builder._handler,
-				onRequest: builder.onRequestHook,
-				preParsing: builder.preParsingHook,
-				preValidation: builder.preValidationHook,
-				preHandler: builder.preHandlerHook,
-				preSerialization: builder.preSerializationHook,
-				onSend: builder.onSendHook,
-				onResponse: builder.onResponseHook,
-				onTimeout: builder.onTimeoutHook,
-				onError: builder.onErrorHook,
-			}));
-		});
+	public async loadRoute(routes: Route.Any[]): Promise<void> {
+		const versionedRoutes = routes.flatMap((route) => route.toVersionedRoutes());
 
 		for (const route of versionedRoutes) {
 			const handler = (req: FastifyRequest, reply: FastifyReply) => {
 				const validated = validate(req, {
-					params: route.paramsValidationSchema,
-					query: route.queryValidationSchema,
-					body: route.bodyValidationSchema,
+					params: route.paramsSchema,
+					query: route.querySchema,
+					body: route.bodySchema,
 				});
 
 				if (validated.success) {
-					const parsed = validated.data as RouteBuilder.ValidatedInput;
+					const parsed = validated.data as Route.AnyParsedData;
 					return route.handler({ req, reply, parsed });
 				}
 
