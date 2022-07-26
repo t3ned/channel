@@ -2,6 +2,7 @@ import type { FastifyInstance } from "fastify";
 import type { Route } from "./Route";
 import { ApplicationLoader } from "./ApplicationLoader";
 import { Class, convertErrorToApiError, isClass } from "../../utils";
+import { HttpStatus } from "../constants";
 import { join } from "path";
 
 export class Application {
@@ -71,7 +72,10 @@ export class Application {
 			const apiError = convertErrorToApiError(error);
 			const apiErrorResponse = {
 				...apiError.toJSON(),
-				stack: this.isDevelopment ? apiError.stack : undefined,
+				stack:
+					this.isDevelopment && apiError.status === HttpStatus.InternalServerError
+						? apiError.stack
+						: undefined,
 			};
 
 			return reply.status(apiError.status).send(apiErrorResponse);
