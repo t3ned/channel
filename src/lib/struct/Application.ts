@@ -74,7 +74,7 @@ export class Application {
 				stack: this.isDevelopment ? apiError.stack : undefined,
 			};
 
-			return reply.send(apiErrorResponse);
+			return reply.status(apiError.status).send(apiErrorResponse);
 		});
 	}
 
