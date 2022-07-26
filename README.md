@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://imgur.com/ccaRNSk.png" align="center" width="80%" alt="channel banner">
+<img src="https://imgur.com/OU9UQJp.png" align="center" width="80%" alt="channel banner">
 <br>
 <br>
 <img src="https://img.shields.io/github/package-json/v/T3NED/channel/main" align="center" alt="">
