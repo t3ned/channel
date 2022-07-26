@@ -1,6 +1,7 @@
 <div align="center">
-<img src="" align="center" width="15%" alt="">
-
+<img src="https://imgur.com/ccaRNSk.png" align="center" width="80%" alt="channel banner">
+<br>
+<br>
 <img src="https://img.shields.io/github/package-json/v/T3NED/channel/main" align="center" alt="">
 <img src="https://img.shields.io/npm/dm/@t3ned/channel" align="center" alt="">
 <img src="https://img.shields.io/github/license/T3NED/channel" align="center" alt="">
