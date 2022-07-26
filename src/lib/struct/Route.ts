@@ -15,15 +15,11 @@ import type {
 
 import type { z, ZodTypeAny } from "zod";
 import { ChannelError } from "../../errors/ChannelError";
+import { HttpStatus } from "../constants";
 import { joinRoutePaths } from "../../utils";
 import { Application } from "./Application";
 
 export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> {
-	/**
-	 * The supported versions for the route
-	 */
-	private _versions: string[] = [];
-
 	/**
 	 * The route path
 	 */
@@ -33,6 +29,16 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	 * The route method
 	 */
 	private _method: Route.Method;
+
+	/**
+	 * The supported versions for the route
+	 */
+	private _versions: string[] = [];
+
+	/**
+	 * The default http status for responses
+	 */
+	private _httpStatus: HttpStatus;
 
 	/**
 	 * The schema for the request params
@@ -107,6 +113,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	public constructor(options: Route.Options<Params, Query, Body>) {
 		this.path = options.path;
 		this._method = options.method;
+		this._httpStatus = options.httpStatus ?? HttpStatus.Ok;
 		this._paramsSchema = options.paramsSchema;
 		this._querySchema = options.querySchema;
 		this._bodySchema = options.bodySchema;
@@ -126,7 +133,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	 * @param version The version
 	 * @param prefix The version prefix
 	 *
-	 * @returns The route builder
+	 * @returns The route
 	 */
 	public version(version: number, prefix = Application.defaultVersionPrefix): this {
 		this._versions.push(`${prefix ?? ""}${version}`);
@@ -135,15 +142,28 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	}
 
 	/**
+	 * Set the default http status for responses
+	 * @param httpStatus The http status
+	 *
+	 * @returns The route
+	 */
+	public status(httpStatus: HttpStatus): this {
+		this._httpStatus = httpStatus;
+
+		return this;
+	}
+
+	/**
 	 * Set the params schema
 	 * @param schema The validation schema
 	 *
-	 * @returns The route builder
+	 * @returns The route
 	 */
 	public params<U extends ZodTypeAny>(schema: U): Route<U, Query, Body> {
 		return new Route({
 			path: this.path,
 			method: this._method,
+			httpStatus: this._httpStatus,
 			paramsSchema: schema,
 			querySchema: this._querySchema,
 			bodySchema: this._bodySchema,
@@ -154,12 +174,13 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	 * Set the query schema
 	 * @param schema The validation schema
 	 *
-	 * @returns The route builder
+	 * @returns The route
 	 */
 	public query<U extends ZodTypeAny>(schema: U): Route<Params, U, Body> {
 		return new Route({
 			path: this.path,
 			method: this._method,
+			httpStatus: this._httpStatus,
 			paramsSchema: this._paramsSchema,
 			querySchema: schema,
 			bodySchema: this._bodySchema,
@@ -170,12 +191,13 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	 * Set the body schema
 	 * @param schema The validation schema
 	 *
-	 * @returns The route builder
+	 * @returns The route
 	 */
 	public body<U extends ZodTypeAny>(schema: U): Route<Params, Query, U> {
 		return new Route({
 			path: this.path,
 			method: this._method,
+			httpStatus: this._httpStatus,
 			paramsSchema: this._paramsSchema,
 			querySchema: this._querySchema,
 			bodySchema: schema,
@@ -186,7 +208,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	 * Set the handler for the route
 	 * @param handler The route handler
 	 *
-	 * @returns The route builder
+	 * @returns The route
 	 */
 	public handler(handler: Route.Handler<Params, Query, Body>): this {
 		this._handler = handler;
@@ -294,6 +316,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 		return versions.map((version) => ({
 			path: joinRoutePaths(Application.routePrefix, version, this.path),
 			method: this._method,
+			httpStatus: this._httpStatus,
 			paramsSchema: this._paramsSchema,
 			querySchema: this._querySchema,
 			bodySchema: this._bodySchema,
@@ -373,6 +396,11 @@ export namespace Route {
 		 * The route method
 		 */
 		method: Method;
+
+		/**
+		 * The default http for responses
+		 */
+		httpStatus?: HttpStatus;
 
 		/**
 		 * The schema for the request params
