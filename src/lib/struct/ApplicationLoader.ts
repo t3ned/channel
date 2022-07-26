@@ -40,7 +40,7 @@ export class ApplicationLoader {
 		const versionedRoutes = routes.flatMap((route) => route.toVersionedRoutes());
 
 		for (const route of versionedRoutes) {
-			const handler = (req: FastifyRequest, reply: FastifyReply) => {
+			const handler = async (req: FastifyRequest, reply: FastifyReply) => {
 				const validated = validate(req, {
 					params: route.paramsSchema,
 					query: route.querySchema,
@@ -49,7 +49,9 @@ export class ApplicationLoader {
 
 				if (validated.success) {
 					const parsed = validated.data as Route.AnyParsedData;
-					return route.handler({ req, reply, parsed });
+					const result = await route.handler({ req, reply, parsed });
+					if (result) return reply.status(route.httpStatus).send(result);
+					return result;
 				}
 
 				return reply.status(HttpStatus.BadRequest).send(validated.error.format());
@@ -96,7 +98,11 @@ export class ApplicationLoader {
 	 * @returns Path iterator
 	 */
 	private async *_recursiveReaddir(path: string): AsyncIterableIterator<string> {
-		for (const file of await readdir(path, { withFileTypes: true })) {
+		const dir = await readdir(path, { withFileTypes: true }).catch((error) => {
+			throw new ChannelError("API route directory error", { cause: error });
+		});
+
+		for (const file of dir) {
 			if (file.isDirectory()) yield* this._recursiveReaddir(`${path}/${file.name}`);
 			else yield `${path}/${file.name}`;
 		}
