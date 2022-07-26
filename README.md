@@ -32,6 +32,7 @@ const server = fastify();
 const app = new Application(server)
 	.setRouteDirPath(__dirname, "api")
 	.setEnvFilePath(process.cwd(), ".env")
+	.setDevelopmentEnvName("DEVELOPMENT")
 	.setRoutePrefix("/api")
 	.setDefaultVersionPrefix("v")
 	.setDefaultVersion(1);
@@ -44,24 +45,35 @@ app.listen(3000, "0.0.0.0")
 ```ts
 // api/example.ts
 
-import { HttpStatus, Get, env } from "@t3ned/channel";
+import { HttpStatus, ApiError, Get, env } from "@t3ned/channel";
+import { z } from "zod";
 
-export const helloWorld = Get("/")
+const getExampleParamsSchema = z.object({
+	id: z.string().uuid(),
+});
+
+process.env.AUTHORIZATION = "EXAMPLE";
+
+export const getExample = Get("/:id")
 	.version(1)
-	.preHandler((req, reply, done) => {
+	.status(HttpStatus.Found)
+	.params(getExampleParamsSchema)
+	.status(HttpStatus.Ok)
+	.preHandler((req, _reply, done) => {
 		const { authorization } = req.headers;
-		if (authorization !== env("AUTHORIZATION_HEADER")) {
-			return reply.status(HttpStatus.Unauthorized).send({
-				code: 0,
-				message: "Unauthorized",
-			});
+
+		if (authorization !== env("AUTHORIZATION")) {
+			throw new ApiError() //
+				.setCode(0)
+				.setStatus(HttpStatus.Unauthorized)
+				.setMessage("Unauthorized");
 		}
 
 		return done();
 	})
-	.handle((req, reply) => {
-		return reply.send({
-			hello: "world",
-		});
+	.handler(({ parsed }) => {
+		return {
+			id: parsed.params.id,
+		};
 	});
 ```
