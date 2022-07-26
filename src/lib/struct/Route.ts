@@ -371,6 +371,7 @@ export namespace Route {
 	> {
 		path: Path;
 		method: Method;
+		httpStatus: HttpStatus;
 		paramsSchema?: Params;
 		querySchema?: Query;
 		bodySchema?: Body;
