@@ -96,7 +96,11 @@ export class ApplicationLoader {
 	 * @returns Path iterator
 	 */
 	private async *_recursiveReaddir(path: string): AsyncIterableIterator<string> {
-		for (const file of await readdir(path, { withFileTypes: true })) {
+		const dir = await readdir(path, { withFileTypes: true }).catch((error) => {
+			throw new ChannelError("API route directory error", { cause: error });
+		});
+
+		for (const file of dir) {
 			if (file.isDirectory()) yield* this._recursiveReaddir(`${path}/${file.name}`);
 			else yield `${path}/${file.name}`;
 		}
