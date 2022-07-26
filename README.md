@@ -2,7 +2,7 @@
 <img src="https://imgur.com/OU9UQJp.png" align="center" width="80%" alt="channel banner">
 <br>
 <br>
-<img src="https://img.shields.io/github/package-json/v/T3NED/channel/main" align="center" alt="">
+<img src="https://img.shields.io/github/package-json/v/T3NED/channel" align="center" alt="">
 <img src="https://img.shields.io/npm/dm/@t3ned/channel" align="center" alt="">
 <img src="https://img.shields.io/github/license/T3NED/channel" align="center" alt="">
 <img src="https://img.shields.io/github/issues/T3NED/channel" align="center" alt="">
