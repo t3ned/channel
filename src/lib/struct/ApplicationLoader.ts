@@ -49,7 +49,7 @@ export class ApplicationLoader {
 
 				if (validated.success) {
 					const parsed = validated.data as Route.AnyParsedData;
-					const result = await route.handler({ req, reply, parsed });
+					const result = await route.handler({ req, reply, parsed, ...this.application.contexts });
 					if (result) return reply.status(route.httpStatus).send(result);
 					return result;
 				}

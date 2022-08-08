@@ -180,7 +180,9 @@ export class Application {
 		if (!this.contexts[contextName] || typeof this.contexts[contextName] !== "object")
 			this.contexts[contextName] = {};
 
-		for (const [key, value] of Object.entries(context).filter(isClass)) {
+		for (const [key, value] of Object.entries(context).filter(([, possibleClass]) =>
+			isClass(possibleClass),
+		)) {
 			(this.contexts[contextName] as object)[key] = new value();
 		}
 
