@@ -30,6 +30,11 @@ export class Application {
 	public routePathPrefix?: string;
 
 	/**
+	 * The prefix to use in file names to ignore in route paths
+	 */
+	public routeFileIgnorePrefix: string;
+
+	/**
 	 * The default route version prefix
 	 */
 	public routeDefaultVersionPrefix: string | null;
@@ -52,6 +57,8 @@ export class Application {
 		this.loader = options.loader ? new options.loader(this) : new ApplicationLoader(this);
 		this.envFilePath = options.envFilePath ? join(...arrayify(options.envFilePath)) : null;
 		this.routeDirPath = options.routeDirPath ? join(...arrayify(options.routeDirPath)) : null;
+		this.routePathPrefix = options.routePathPrefix;
+		this.routeFileIgnorePrefix = options.routeFileIgnorePrefix ?? "_";
 		this.routeDefaultVersionPrefix = options.routeDefaultVersionPrefix ?? null;
 		this.routeDefaultVersionNumber = options.routeDefaultVersionNumber ?? null;
 		this.debug = options.debug ?? false;
@@ -105,6 +112,11 @@ export namespace Application {
 		 * The prefix for a route path
 		 */
 		routePathPrefix?: string;
+
+		/**
+		 * The prefix to use in file names to ignore in route paths
+		 */
+		routeFileIgnorePrefix?: string;
 
 		/**
 		 * The default route version prefix
