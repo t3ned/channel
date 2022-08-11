@@ -1,4 +1,4 @@
-import { Route } from "../lib";
+import { Route } from "..";
 
 /**
  * Check whether a value is a Route

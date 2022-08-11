@@ -14,9 +14,9 @@ import type {
 } from "fastify";
 
 import type { z, ZodTypeAny } from "zod";
-import { ChannelError } from "../../errors/ChannelError";
+import { ChannelError } from "../errors/ChannelError";
 import { HttpStatus } from "../constants";
-import { joinRoutePaths } from "../../utils";
+import { joinRoutePaths } from "../utils";
 import { Application } from "./Application";
 
 export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> {

@@ -1,8 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Application } from "./Application";
 import type { Route } from "./Route";
-import { joinRoutePaths, isRoute, validate } from "../../utils";
-import { ChannelError } from "../../errors";
+import { joinRoutePaths, isRoute, validate } from "../utils";
+import { ChannelError } from "../errors";
 import { HttpStatus } from "../constants";
 import { readdir, readFile } from "fs/promises";
 import { extname } from "path";

@@ -1,6 +1,6 @@
 import type { EnvResolver } from "../interface";
-import { ChannelError } from "../../../errors";
-import { isUndefined } from "../../../utils";
+import { ChannelError } from "../../errors";
+import { isUndefined } from "../../utils";
 import { env } from "./env";
 
 const isValidInteger = (value: string) => Number(value) === parseInt(value);

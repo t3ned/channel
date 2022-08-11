@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { Route } from "./Route";
 import { ApplicationLoader } from "./ApplicationLoader";
-import { Class, convertErrorToApiError, isClass } from "../../utils";
+import { Class, convertErrorToApiError, isClass } from "../utils";
 import { HttpStatus } from "../constants";
 import { join } from "path";
 
