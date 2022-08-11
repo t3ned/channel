@@ -1,199 +1,124 @@
-import type { FastifyInstance } from "fastify";
-import type { Route } from "./Route";
 import { ApplicationLoader } from "./ApplicationLoader";
-import { convertErrorToApiError } from "../utils";
-import { HttpStatus } from "../constants";
+import { fastify, FastifyInstance } from "fastify";
+import { arrayify } from "../utils";
 import { join } from "path";
 
 export class Application {
 	/**
-	 * The fastify server
+	 * The fastify instance for the application to use
 	 */
-	public server!: FastifyInstance;
+	public instance: FastifyInstance;
 
 	/**
-	 * The application file loader
+	 * The application loader for loading routes
 	 */
-	public loader: ApplicationLoader = new ApplicationLoader(this);
-
-	/**
-	 * The path to the API routes folder
-	 */
-	public routeDirPath?: string;
+	public loader: ApplicationLoader;
 
 	/**
 	 * The path to the env file
 	 */
-	public envFilePath?: string;
+	public envFilePath: string | null;
 
 	/**
-	 * Whether the application is a development instance
+	 * The path to the directory routes are located
 	 */
-	public isDevelopment = true;
+	public routeDirPath: string | null;
 
 	/**
-	 * The host to bind
+	 * The prefix for a route path
 	 */
-	public host?: string;
+	public routePathPrefix?: string;
 
 	/**
-	 * The port to bind
+	 * The default route version prefix
 	 */
-	public port?: number;
+	public routeDefaultVersionPrefix: string | null;
 
 	/**
-	 * The route prefix
+	 * The default route version number
 	 */
-	public static routePrefix: Route.Path = "/api";
+	public routeDefaultVersionNumber: number | null;
+
+	/**
+	 * Whether to enable debug logs
+	 */
+	public debug: boolean;
+
+	/**
+	 * @param options The application options
+	 */
+	public constructor(options: Application.Options = {}) {
+		this.instance = options.instance ?? fastify();
+		this.loader = options.loader ? new options.loader(this) : new ApplicationLoader(this);
+		this.envFilePath = options.envFilePath ? join(...arrayify(options.envFilePath)) : null;
+		this.routeDirPath = options.routeDirPath ? join(...arrayify(options.routeDirPath)) : null;
+		this.routeDefaultVersionPrefix = options.routeDefaultVersionPrefix ?? null;
+		this.routeDefaultVersionNumber = options.routeDefaultVersionNumber ?? null;
+		this.debug = options.debug ?? false;
+	}
 
 	/**
 	 * The default route version
 	 */
-	public static defaultVersion = 1;
-
-	/**
-	 * The default route version
-	 */
-	public static defaultVersionPrefix = "v";
-
-	/**
-	 * The contexts to pass to route handlers
-	 */
-	public contexts: Application.ObjectContext<unknown> = {};
-
-	/**
-	 * Create an instance of an fastify application
-	 * @param server The fastify server
-	 */
-	public constructor(server: FastifyInstance) {
-		Reflect.defineProperty(this, "server", { value: server, enumerable: false });
-
-		server.setErrorHandler(async (error, _req, reply) => {
-			const apiError = convertErrorToApiError(error);
-			const apiErrorResponse = {
-				...apiError.toJSON(),
-				stack:
-					this.isDevelopment && apiError.status === HttpStatus.InternalServerError
-						? apiError.stack
-						: undefined,
-			};
-
-			return reply.status(apiError.status).send(apiErrorResponse);
-		});
-	}
-
-	/**
-	 * Set the path where the API routes are located
-	 * @param path The API route path
-	 *
-	 * @returns The application
-	 */
-	public setRouteDirPath(...path: string[]): this {
-		this.routeDirPath = join(...path);
-
-		return this;
-	}
-
-	/**
-	 * Set the env file path
-	 * @param path The env file path
-	 *
-	 * @returns The application
-	 */
-	public setEnvFilePath(...path: string[]): this {
-		this.envFilePath = join(...path);
-		this.loader.loadEnv();
-
-		return this;
-	}
-
-	/**
-	 * The NODE_ENV or APP_ENV development environment identifier
-	 * @param identifier The env identifier
-	 *
-	 * @returns The application
-	 */
-	public setDevelopmentEnvName(identifier: string): this {
-		this.isDevelopment = [process.env.NODE_ENV, process.env.APP_ENV].includes(identifier);
-
-		return this;
-	}
-
-	/**
-	 * Set the route prefix
-	 * @param routePrefix The route prefix
-	 *
-	 * @returns The application
-	 */
-	public setRoutePrefix(routePrefix: Route.Path): this {
-		Application.routePrefix = routePrefix;
-
-		return this;
-	}
-
-	/**
-	 * Set the default route version
-	 * @param version The version number
-	 *
-	 * @returns The application
-	 */
-	public setDefaultVersion(version: number): this {
-		Application.defaultVersion = version;
-
-		return this;
-	}
-
-	/**
-	 * Set the default route version prefix
-	 * @param prefix The version prefix
-	 *
-	 * @returns The application
-	 */
-	public setDefaultVersionPrefix(prefix: string): this {
-		Application.defaultVersionPrefix = prefix;
-
-		return this;
-	}
-
-	/**
-	 * Add a context
-	 * @param contextName The name of the context
-	 * @param context The context
-	 *
-	 * @returns The application
-	 */
-	public addContext<T>(contextName: string, context: Application.Context<T>): this {
-		this.contexts[contextName] = context;
-
-		return this;
-	}
-
-	/**
-	 * The default version slug
-	 */
-	public static get defaultVersionSlug(): string {
-		return `${Application.defaultVersionPrefix}${Application.defaultVersion}`;
+	public get routeDefaultVersion(): string {
+		return `${this.routeDefaultVersionPrefix ?? ""}${this.routeDefaultVersionNumber ?? ""}`;
 	}
 
 	/**
 	 * Listen for connections
-	 * @param port The port to bind
 	 * @param host The host to bind
+	 * @param port The port to bind
 	 *
 	 * @returns The application
 	 */
-	public async listen(port: number, host?: string): Promise<this> {
-		this.port = port;
-		this.host = host;
-
+	public async listen(host: string, port: number): Promise<this> {
 		await this.loader.loadRoutes();
-		await this.server.listen({ port, host });
+		await this.instance.listen({ port, host });
 
 		return this;
 	}
 }
 
 export namespace Application {
-	export type Context<T> = ObjectContext<T> | T;
-	export type ObjectContext<T> = { [k: string]: T };
+	export interface Options {
+		/**
+		 * The fastify instance for the application to use
+		 */
+		instance?: FastifyInstance;
+
+		/**
+		 * The application loader for loading routes
+		 */
+		loader?: typeof ApplicationLoader;
+
+		/**
+		 * The path to the env file
+		 */
+		envFilePath?: string[] | string;
+
+		/**
+		 * The path to the directory routes are located
+		 */
+		routeDirPath?: string[] | string;
+
+		/**
+		 * The prefix for a route path
+		 */
+		routePathPrefix?: string;
+
+		/**
+		 * The default route version prefix
+		 */
+		routeDefaultVersionPrefix?: string;
+
+		/**
+		 * The default route version number
+		 */
+		routeDefaultVersionNumber?: number;
+
+		/**
+		 * Whether to enable debug logs
+		 */
+		debug?: boolean;
+	}
 }
