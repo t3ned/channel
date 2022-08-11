@@ -1,5 +1,5 @@
 import type { FastifyRequest } from "fastify";
-import { removeUndefinedEntries } from ".";
+import { removeUndefinedEntries } from "..";
 import { z, ZodTypeAny } from "zod";
 
 export const validate = (req: FastifyRequest, schema: Partial<ValidationSchema>) => {

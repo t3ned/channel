@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Application } from "./Application";
-import type { Route } from "./Route";
-import { joinRoutePaths, isRoute, validate } from "../utils";
+import { Route } from "./Route";
+import { joinRoutePaths, validate } from "../utils";
 import { ChannelError } from "../errors";
 import { HttpStatus } from "../constants";
 import { readdir, readFile } from "fs/promises";
@@ -20,7 +20,7 @@ export class ApplicationLoader {
 		for await (const path of this._recursiveReaddir(this._apiPath)) {
 			const mod = await import(path).catch(() => ({}));
 			const routePath = path.slice(this._apiPath.length, -extname(path).length);
-			const routes = Object.values(mod).filter((route) => isRoute(route)) as Route.Any[];
+			const routes = Object.values(mod).filter((route) => route instanceof Route) as Route.Any[];
 
 			if (routes.length)
 				await this.loadRoute(

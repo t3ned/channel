@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { Route } from "./Route";
 import { ApplicationLoader } from "./ApplicationLoader";
-import { Class, convertErrorToApiError, isClass } from "../utils";
+import { convertErrorToApiError } from "../utils";
 import { HttpStatus } from "../constants";
 import { join } from "path";
 
@@ -169,27 +169,6 @@ export class Application {
 	}
 
 	/**
-	 * Add a class context - an instance of the classes will be created
-	 * @param contextName The name of the context
-	 * @param context The context
-	 *
-	 * @returns The application
-	 */
-	public addClassContext<T>(contextName: string, context: Application.ClassContext<T>): this {
-		if (isClass(context)) return this.addContext(contextName, new context());
-		if (!this.contexts[contextName] || typeof this.contexts[contextName] !== "object")
-			this.contexts[contextName] = {};
-
-		for (const [key, value] of Object.entries(context).filter(([, possibleClass]) =>
-			isClass(possibleClass),
-		)) {
-			(this.contexts[contextName] as object)[key] = new value();
-		}
-
-		return this;
-	}
-
-	/**
 	 * The default version slug
 	 */
 	public static get defaultVersionSlug(): string {
@@ -216,6 +195,5 @@ export class Application {
 
 export namespace Application {
 	export type Context<T> = ObjectContext<T> | T;
-	export type ClassContext<T> = ObjectContext<Class<T>> | Class<T>;
 	export type ObjectContext<T> = { [k: string]: T };
 }

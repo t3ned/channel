@@ -1,4 +1,4 @@
-import { ApiError, HttpStatus } from "..";
+import { ApiError, HttpStatus } from "../..";
 
 /**
  * Convert an error into an api error

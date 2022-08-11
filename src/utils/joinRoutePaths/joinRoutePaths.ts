@@ -1,4 +1,4 @@
-import type { Route } from "..";
+import type { Route } from "../..";
 
 /**
  * Join multiple route paths
