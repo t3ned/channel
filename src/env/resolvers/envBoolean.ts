@@ -1,15 +1,25 @@
-import type { EnvResolver } from "../interface";
-import { ChannelError } from "../../errors";
-import { env } from "./env";
+import type { EnvResolver } from "..";
+import { MissingEnvVariableError, InvalidEnvVariableError } from "../../errors";
 
-const truthy = ["true", "1"];
-const falsey = ["false", "0"];
+const truthy: unknown[] = [true, "true", 1, "1"];
+const falsey: unknown[] = [false, "false", 0, "0"];
 
-const isValidBoolean = (value: string) => [...truthy, ...falsey].includes(value);
+const validBooleans: unknown[] = [...truthy, ...falsey];
 
 export const envBoolean = ((key: string, required = true, defaultValue?: boolean): boolean | undefined => {
-	const value = env(key, required, `${defaultValue}`);
-	if (typeof value === "undefined") return undefined;
-	if (!isValidBoolean(value)) throw new ChannelError(`Invalid boolean environment variable: ${key}`);
+	const value = process.env[key] ?? defaultValue;
+
+	if (required && typeof value === "undefined") {
+		throw new MissingEnvVariableError(key);
+	}
+
+	if (typeof value === "undefined") {
+		return undefined;
+	}
+
+	if (!validBooleans.includes(value)) {
+		throw new InvalidEnvVariableError(key, "boolean");
+	}
+
 	return truthy.includes(value);
 }) as EnvResolver<boolean>;
