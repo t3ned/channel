@@ -12,7 +12,7 @@ export const envInteger = ((key: string, required = true, defaultValue?: number)
 		return undefined;
 	}
 
-	if (Math.floor(Number(value)) === Number(value)) {
+	if (Math.floor(Number(value)) !== Number(value)) {
 		throw new InvalidEnvVariableError(key, "integer");
 	}
 
