@@ -1,3 +1,4 @@
+import cors, { FastifyCorsOptions } from "@fastify/cors";
 import { ApplicationLoader } from "./ApplicationLoader";
 import { fastify, FastifyInstance } from "fastify";
 import { arrayify } from "../utils";
@@ -49,7 +50,9 @@ export class Application {
 	 */
 	public constructor(options: Application.Options = {}) {
 		this.instance = options.instance ?? fastify();
-		this.loader = options.loader ? new options.loader(this) : new ApplicationLoader(this);
+		this.instance.register(cors, options.cors);
+
+		this.loader = options.loader ?? new ApplicationLoader(this);
 		this.routeDirPath = options.routeDirPath ? join(...arrayify(options.routeDirPath)) : null;
 		this.routePathPrefix = options.routePathPrefix;
 		this.routeFileIgnorePrefix = options.routeFileIgnorePrefix ?? "_";
@@ -90,7 +93,7 @@ export namespace Application {
 		/**
 		 * The application loader for loading routes
 		 */
-		loader?: typeof ApplicationLoader;
+		loader?: ApplicationLoader;
 
 		/**
 		 * The path to the env file
@@ -126,5 +129,10 @@ export namespace Application {
 		 * Whether to enable debug logs
 		 */
 		debug?: boolean;
+
+		/**
+		 * Cors options
+		 */
+		cors?: FastifyCorsOptions;
 	}
 }
