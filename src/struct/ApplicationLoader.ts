@@ -1,15 +1,15 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Application } from "./Application";
-import { Route } from "./Route";
 import { joinRoutePaths, validate } from "../utils";
+import { readdir, readFile } from "fs/promises";
 import { ChannelError } from "../errors";
 import { HttpStatus } from "../constants";
-import { readdir, readFile } from "fs/promises";
-import { extname } from "path";
+import { basename, extname } from "path";
+import { Route } from "./Route";
 
 export class ApplicationLoader {
 	/**
-	 * @param application The API application
+	 * @param application The application
 	 */
 	public constructor(public application: Application) {}
 
@@ -17,27 +17,35 @@ export class ApplicationLoader {
 	 * Load all the routes
 	 */
 	public async loadRoutes(): Promise<void> {
-		for await (const path of this._recursiveReaddir(this._apiPath)) {
-			const mod = await import(path).catch(() => ({}));
-			const routePath = path.slice(this._apiPath.length, -extname(path).length);
-			const routes = Object.values(mod).filter((route) => route instanceof Route) as Route.Any[];
+		if (!this.application.routeDirPath) return;
 
-			if (routes.length)
-				await this.loadRoute(
-					routes.map((route) => {
-						route.path = joinRoutePaths(routePath, route.path);
-						return route;
-					}),
-				);
+		for await (const path of this._recursiveReaddir(this.application.routeDirPath)) {
+			const mod = await import(path).catch(() => ({}));
+
+			const fileExtension = extname(path);
+			const fileName = basename(path, fileExtension);
+
+			const sliceLength = fileName.startsWith(this.application.routeFileIgnorePrefix)
+				? fileName.length + 1 // add one to remove trailing slash
+				: fileExtension.length;
+
+			const routePath = path.slice(this.application.routeDirPath.length, -sliceLength);
+
+			for (const route of Object.values(mod)) {
+				if (route instanceof Route) {
+					route.path = joinRoutePaths(routePath, route.path);
+					await this.loadRoute(route);
+				}
+			}
 		}
 	}
 
 	/**
-	 * Load a route file
-	 * @param routes The routes
+	 * Load a route
+	 * @param route The routes
 	 */
-	public async loadRoute(routes: Route.Any[]): Promise<void> {
-		const versionedRoutes = routes.flatMap((route) => route.toVersionedRoutes());
+	public async loadRoute(route: Route.Any): Promise<void> {
+		const versionedRoutes = route.toVersionedRoutes(this.application);
 
 		for (const route of versionedRoutes) {
 			const handler = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -49,7 +57,7 @@ export class ApplicationLoader {
 
 				if (validated.success) {
 					const parsed = validated.data as Route.AnyParsedData;
-					const result = await route.handler({ req, reply, parsed, ...this.application.contexts });
+					const result = await route.handler({ req, reply, parsed });
 					if (result) return reply.status(route.httpStatus).send(result);
 					return result;
 				}
@@ -57,9 +65,9 @@ export class ApplicationLoader {
 				return reply.status(HttpStatus.BadRequest).send(validated.error.format());
 			};
 
-			this.application.server.route({
+			this.application.instance.route({
 				method: route.method,
-				url: route.path,
+				url: joinRoutePaths(this.application.routePathPrefix, route.path),
 				handler,
 				onRequest: route.onRequest,
 				preParsing: route.preParsing,
@@ -106,13 +114,5 @@ export class ApplicationLoader {
 			if (file.isDirectory()) yield* this._recursiveReaddir(`${path}/${file.name}`);
 			else yield `${path}/${file.name}`;
 		}
-	}
-
-	/**
-	 * Get the API route path
-	 */
-	private get _apiPath(): string {
-		if (this.application.routeDirPath) return this.application.routeDirPath;
-		throw new ChannelError("API route directory path not provided");
 	}
 }

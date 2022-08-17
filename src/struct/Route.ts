@@ -17,7 +17,7 @@ import type { z, ZodTypeAny } from "zod";
 import { ChannelError } from "../errors/ChannelError";
 import { HttpStatus } from "../constants";
 import { joinRoutePaths } from "../utils";
-import { Application } from "./Application";
+import type { Application } from "./Application";
 
 export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> {
 	/**
@@ -33,7 +33,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	/**
 	 * The supported versions for the route
 	 */
-	private _versions: string[] = [];
+	private _versions: [prefix: string | null, v: number][] = [];
 
 	/**
 	 * The default http status for responses
@@ -135,8 +135,8 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	 *
 	 * @returns The route
 	 */
-	public version(version: number, prefix = Application.defaultVersionPrefix): this {
-		this._versions.push(`${prefix ?? ""}${version}`);
+	public version(version: number, prefix?: string): this {
+		this._versions.push([prefix ?? null, version]);
 
 		return this;
 	}
@@ -309,12 +309,25 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	/**
 	 * Get the versioned routes
 	 */
-	public toVersionedRoutes(): Route.VersionedRoute<Params, Query, Body>[] {
-		const versions = [...this._versions];
-		if (!versions.length) versions.push(Application.defaultVersionSlug);
+	public toVersionedRoutes(application: Application): Route.VersionedRoute<Params, Query, Body>[] {
+		if (!this._versions.length) return [this.toJSON(application)];
 
-		return versions.map((version) => ({
-			path: joinRoutePaths(Application.routePrefix, version, this.path),
+		return this._versions.map((version) => ({
+			...this.toJSON(application),
+			path: joinRoutePaths(
+				`${version[0] ?? application.routeDefaultVersionPrefix ?? ""}${version[1] ?? ""}`,
+				this.path,
+			),
+		}));
+	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	public toJSON(application: Application): Route.VersionedRoute<Params, Query, Body> {
+		return {
+			path: joinRoutePaths(application.routeDefaultVersion, this.path),
 			method: this._method,
 			httpStatus: this._httpStatus,
 			paramsSchema: this._paramsSchema,
@@ -330,7 +343,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 			onResponse: this._onResponseHook,
 			onTimeout: this._onTimeoutHook,
 			onError: this._onErrorHook,
-		}));
+		};
 	}
 }
 
