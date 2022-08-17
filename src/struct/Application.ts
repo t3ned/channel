@@ -96,11 +96,6 @@ export namespace Application {
 		loader?: ApplicationLoader;
 
 		/**
-		 * The path to the env file
-		 */
-		envFilePath?: string[] | string;
-
-		/**
 		 * The path to the directory routes are located
 		 */
 		routeDirPath?: string[] | string;
