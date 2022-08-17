@@ -15,11 +15,6 @@ export class Application {
 	public loader: ApplicationLoader;
 
 	/**
-	 * The path to the env file
-	 */
-	public envFilePath: string | null;
-
-	/**
 	 * The path to the directory routes are located
 	 */
 	public routeDirPath: string | null;
@@ -55,7 +50,6 @@ export class Application {
 	public constructor(options: Application.Options = {}) {
 		this.instance = options.instance ?? fastify();
 		this.loader = options.loader ? new options.loader(this) : new ApplicationLoader(this);
-		this.envFilePath = options.envFilePath ? join(...arrayify(options.envFilePath)) : null;
 		this.routeDirPath = options.routeDirPath ? join(...arrayify(options.routeDirPath)) : null;
 		this.routePathPrefix = options.routePathPrefix;
 		this.routeFileIgnorePrefix = options.routeFileIgnorePrefix ?? "_";

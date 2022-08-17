@@ -1,10 +1,10 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { Application } from "./Application";
 import { joinRoutePaths, validate } from "../utils";
-import { readdir, readFile } from "fs/promises";
 import { ChannelError } from "../errors";
 import { HttpStatus } from "../constants";
 import { basename, extname } from "path";
+import { readdir } from "fs/promises";
 import { Route } from "./Route";
 
 export class ApplicationLoader {
@@ -79,23 +79,6 @@ export class ApplicationLoader {
 				onTimeout: route.onTimeout,
 				onError: route.onError,
 			});
-		}
-	}
-
-	/**
-	 * Load the env file
-	 */
-	public async loadEnv(): Promise<void> {
-		if (!this.application.envFilePath) return;
-
-		const mod = await readFile(this.application.envFilePath, "utf-8").catch(() => "");
-		const lines = mod.split("\n");
-
-		for (const line of lines) {
-			const [key, value] = line.split(/=(.*)/s).map((part) => part.trim());
-			if (!key || key.startsWith("#") || typeof value !== "string") continue;
-
-			Reflect.defineProperty(process.env, key, { value });
 		}
 	}
 
