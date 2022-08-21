@@ -14,6 +14,11 @@ export class ApiError<ErrorData = unknown> extends ChannelError {
 	public data?: ErrorData;
 
 	/**
+	 * The error trace
+	 */
+	public trace?: string;
+
+	/**
 	 * The HTTP status code
 	 */
 	private _status?: HttpStatus;
@@ -65,13 +70,13 @@ export class ApiError<ErrorData = unknown> extends ChannelError {
 	}
 
 	/**
-	 * Set the error stack
-	 * @param stack The stack
+	 * Set the error trace
+	 * @param trace The trace
 	 *
 	 * @returns The ApiError
 	 */
-	public setStack(stack: string): this {
-		this.stack = stack;
+	public setTrace(trace: string): this {
+		this.trace = trace;
 
 		return this;
 	}
@@ -112,7 +117,7 @@ export class ApiError<ErrorData = unknown> extends ChannelError {
 			code: this.code,
 			message: this.message,
 			data: this.data,
-			stack: this.stack,
+			trace: this.trace,
 		};
 	}
 }
@@ -121,5 +126,5 @@ export interface ApiErrorJson<ErrorData> {
 	code?: string | number;
 	message: string;
 	data?: ErrorData;
-	stack?: string;
+	trace?: string;
 }

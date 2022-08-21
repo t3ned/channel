@@ -14,5 +14,5 @@ export const convertErrorToApiError = (error: Error): ApiError => {
 		.setStatus(HttpStatus.InternalServerError)
 		.setMessage("Internal Server Error");
 
-	return error.stack ? apiError.setStack(error.stack) : apiError;
+	return error.stack ? apiError.setTrace(error.stack) : apiError;
 };
