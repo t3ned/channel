@@ -2,7 +2,9 @@ import cors, { FastifyCorsOptions } from "@fastify/cors";
 import { arrayify, convertErrorToApiError } from "../utils";
 import { ApplicationLoader } from "./ApplicationLoader";
 import { fastify, FastifyInstance } from "fastify";
+import { ApiError } from "../errors";
 import { join } from "path";
+import { HttpStatus } from "../constants";
 
 export class Application {
 	/**
@@ -60,7 +62,7 @@ export class Application {
 		this.routeDefaultVersionNumber = options.routeDefaultVersionNumber ?? null;
 		this.debug = options.debug ?? false;
 
-		if (options.useDefaultErrorHandler) {
+		if (options.useDefaultErrorHandler ?? true) {
 			this.instance.setErrorHandler(async (error, _req, reply) => {
 				const apiError = convertErrorToApiError(error);
 				const apiErrorResponse = {
@@ -71,6 +73,15 @@ export class Application {
 				// TODO: logger
 
 				return reply.status(apiError.status).send(apiErrorResponse);
+			});
+		}
+
+		if (options.useDefaultNotFoundHandler ?? true) {
+			this.instance.setNotFoundHandler(async (req) => {
+				throw new ApiError()
+					.setCode(0)
+					.setStatus(HttpStatus.NotFound)
+					.setMessage(`Route \`${req.url}\` not found`);
 			});
 		}
 	}
@@ -138,6 +149,11 @@ export namespace Application {
 		 * Whether to set the default error handler
 		 */
 		useDefaultErrorHandler?: boolean;
+
+		/**
+		 * Whether to set the default not found handler
+		 */
+		useDefaultNotFoundHandler?: boolean;
 
 		/**
 		 * Whether to enable debug logs
