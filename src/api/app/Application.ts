@@ -1,3 +1,4 @@
+import type { ZodError } from "zod";
 import cors, { FastifyCorsOptions } from "@fastify/cors";
 import { arrayify, convertErrorToApiError } from "../../utils";
 import { ApplicationLoader } from "./ApplicationLoader";
@@ -43,6 +44,11 @@ export class Application {
 	public routeDefaultVersionNumber: number | null;
 
 	/**
+	 * The validation error mapper
+	 */
+	public validationErrorMapper: Application.ValidationErrorMapper;
+
+	/**
 	 * Whether to enable debug logs
 	 */
 	public debug: boolean;
@@ -61,6 +67,8 @@ export class Application {
 		this.routeDefaultVersionPrefix = options.routeDefaultVersionPrefix ?? null;
 		this.routeDefaultVersionNumber = options.routeDefaultVersionNumber ?? null;
 		this.debug = options.debug ?? false;
+
+		this.validationErrorMapper = options.validationErrorMapper ?? ((error) => error.format());
 
 		if (options.useDefaultErrorHandler ?? true) {
 			this.instance.setErrorHandler(async (error, _req, reply) => {
@@ -156,6 +164,11 @@ export namespace Application {
 		useDefaultNotFoundHandler?: boolean;
 
 		/**
+		 * The validation error mapper
+		 */
+		validationErrorMapper?: ValidationErrorMapper;
+
+		/**
 		 * Whether to enable debug logs
 		 */
 		debug?: boolean;
@@ -165,4 +178,6 @@ export namespace Application {
 		 */
 		cors?: FastifyCorsOptions;
 	}
+
+	export type ValidationErrorMapper = (error: ZodError) => Promise<unknown> | unknown;
 }

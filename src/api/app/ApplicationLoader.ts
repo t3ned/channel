@@ -62,7 +62,9 @@ export class ApplicationLoader {
 					return result;
 				}
 
-				return reply.status(HttpStatus.BadRequest).send(validated.error.format());
+				return reply
+					.status(HttpStatus.BadRequest)
+					.send(this.application.validationErrorMapper(validated.error));
 			};
 
 			this.application.instance.route({
