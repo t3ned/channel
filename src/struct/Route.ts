@@ -14,10 +14,10 @@ import type {
 } from "fastify";
 
 import type { z, ZodTypeAny } from "zod";
+import type { Application } from "./Application";
 import { ChannelError } from "../errors/ChannelError";
 import { HttpStatus } from "../constants";
 import { joinRoutePaths } from "../utils";
-import type { Application } from "./Application";
 
 export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> {
 	/**
@@ -33,7 +33,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	/**
 	 * The supported versions for the route
 	 */
-	private _versions: [prefix: string | null, v: number][] = [];
+	private _versions: [prefix: string | null, v: number][];
 
 	/**
 	 * The default http status for responses
@@ -113,6 +113,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 	public constructor(options: Route.Options<Params, Query, Body>) {
 		this.path = options.path;
 		this._method = options.method;
+		this._versions = options.versions ?? [];
 		this._httpStatus = options.httpStatus ?? HttpStatus.Ok;
 		this._paramsSchema = options.paramsSchema;
 		this._querySchema = options.querySchema;
@@ -163,6 +164,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 		return new Route({
 			path: this.path,
 			method: this._method,
+			versions: this._versions,
 			httpStatus: this._httpStatus,
 			paramsSchema: schema,
 			querySchema: this._querySchema,
@@ -180,6 +182,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 		return new Route({
 			path: this.path,
 			method: this._method,
+			versions: this._versions,
 			httpStatus: this._httpStatus,
 			paramsSchema: this._paramsSchema,
 			querySchema: schema,
@@ -197,6 +200,7 @@ export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body ext
 		return new Route({
 			path: this.path,
 			method: this._method,
+			versions: this._versions,
 			httpStatus: this._httpStatus,
 			paramsSchema: this._paramsSchema,
 			querySchema: this._querySchema,
@@ -410,6 +414,11 @@ export namespace Route {
 		 * The route method
 		 */
 		method: Method;
+
+		/**
+		 * The route versions
+		 */
+		versions?: [prefix: string | null, v: number][];
 
 		/**
 		 * The default http for responses
