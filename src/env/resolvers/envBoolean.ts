@@ -1,5 +1,5 @@
 import type { EnvResolver } from "..";
-import { MissingEnvVariableError, InvalidEnvVariableError } from "../../errors";
+import { MissingEnvVariableError, InvalidEnvVariableError } from "../../api/errors";
 
 const truthy: unknown[] = [true, "true", 1, "1"];
 const falsey: unknown[] = [false, "false", 0, "0"];

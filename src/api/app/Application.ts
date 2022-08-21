@@ -1,10 +1,10 @@
 import cors, { FastifyCorsOptions } from "@fastify/cors";
-import { arrayify, convertErrorToApiError } from "../utils";
+import { arrayify, convertErrorToApiError } from "../../utils";
 import { ApplicationLoader } from "./ApplicationLoader";
 import { fastify, FastifyInstance } from "fastify";
+import { HttpStatus } from "../../constants";
 import { ApiError } from "../errors";
 import { join } from "path";
-import { HttpStatus } from "../constants";
 
 export class Application {
 	/**

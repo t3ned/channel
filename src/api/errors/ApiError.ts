@@ -1,4 +1,4 @@
-import type { HttpStatus } from "..";
+import type { HttpStatus } from "../..";
 import { STATUS_CODES } from "http";
 import { ChannelError } from ".";
 

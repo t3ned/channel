@@ -16,8 +16,8 @@ import type {
 import type { z, ZodTypeAny } from "zod";
 import type { Application } from "./Application";
 import { ChannelError } from "../errors/ChannelError";
-import { HttpStatus } from "../constants";
-import { joinRoutePaths } from "../utils";
+import { HttpStatus } from "../../constants";
+import { joinRoutePaths } from "../../utils";
 
 export class Route<Params extends ZodTypeAny, Query extends ZodTypeAny, Body extends ZodTypeAny> {
 	/**

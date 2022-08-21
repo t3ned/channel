@@ -1,5 +1,5 @@
 import type { EnvResolver } from "../interface";
-import { MissingEnvVariableError } from "../../errors";
+import { MissingEnvVariableError } from "../../api/errors";
 
 export const envString = ((key: string, required = true, defaultValue?: string): string | undefined => {
 	const value = process.env[key] ?? defaultValue;
