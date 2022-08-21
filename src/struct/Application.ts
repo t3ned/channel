@@ -70,7 +70,7 @@ export class Application {
 
 				// TODO: logger
 
-				return reply.send(apiErrorResponse);
+				return reply.status(apiError.status).send(apiErrorResponse);
 			});
 		}
 	}
