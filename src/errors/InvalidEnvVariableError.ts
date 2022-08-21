@@ -1,4 +1,6 @@
-export class InvalidEnvVariableError extends Error {
+import { ChannelError } from "./ChannelError";
+
+export class InvalidEnvVariableError extends ChannelError {
 	/**
 	 * @param envVariable The name of the env variable
 	 * @param type The type of env variable
