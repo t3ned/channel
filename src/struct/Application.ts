@@ -1,7 +1,7 @@
 import cors, { FastifyCorsOptions } from "@fastify/cors";
+import { arrayify, convertErrorToApiError } from "../utils";
 import { ApplicationLoader } from "./ApplicationLoader";
 import { fastify, FastifyInstance } from "fastify";
-import { arrayify } from "../utils";
 import { join } from "path";
 
 export class Application {
@@ -59,6 +59,20 @@ export class Application {
 		this.routeDefaultVersionPrefix = options.routeDefaultVersionPrefix ?? null;
 		this.routeDefaultVersionNumber = options.routeDefaultVersionNumber ?? null;
 		this.debug = options.debug ?? false;
+
+		if (options.useDefaultErrorHandler) {
+			this.instance.setErrorHandler(async (error, _req, reply) => {
+				const apiError = convertErrorToApiError(error);
+				const apiErrorResponse = {
+					...apiError.toJSON(),
+					trace: this.debug ? apiError.trace : undefined,
+				};
+
+				// TODO: logger
+
+				return reply.send(apiErrorResponse);
+			});
+		}
 	}
 
 	/**
@@ -119,6 +133,11 @@ export namespace Application {
 		 * The default route version number
 		 */
 		routeDefaultVersionNumber?: number;
+
+		/**
+		 * Whether to set the default error handler
+		 */
+		useDefaultErrorHandler?: boolean;
 
 		/**
 		 * Whether to enable debug logs
