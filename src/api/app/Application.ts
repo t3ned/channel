@@ -49,6 +49,11 @@ export class Application {
 	public validationErrorMapper: Application.ValidationErrorMapper;
 
 	/**
+	 * The logger to use
+	 */
+	public logger: Application.CompatibleLogger;
+
+	/**
 	 * Whether to enable debug logs
 	 */
 	public debug: boolean;
@@ -70,6 +75,12 @@ export class Application {
 
 		this.validationErrorMapper = options.validationErrorMapper ?? ((error) => error.format());
 
+		this.logger = options.logger ?? {
+			debug: console.debug,
+			info: console.info,
+			error: console.error,
+		};
+
 		if (options.useDefaultErrorHandler ?? true) {
 			this.instance.setErrorHandler(async (error, _req, reply) => {
 				const apiError = convertErrorToApiError(error);
@@ -78,7 +89,7 @@ export class Application {
 					trace: this.debug ? apiError.trace : undefined,
 				};
 
-				// TODO: logger
+				this.logger.error(apiError);
 
 				return reply.status(apiError.status).send(apiErrorResponse);
 			});
@@ -169,6 +180,11 @@ export namespace Application {
 		validationErrorMapper?: ValidationErrorMapper;
 
 		/**
+		 * The logger to use
+		 */
+		logger?: CompatibleLogger;
+
+		/**
 		 * Whether to enable debug logs
 		 */
 		debug?: boolean;
@@ -180,4 +196,10 @@ export namespace Application {
 	}
 
 	export type ValidationErrorMapper = (error: ZodError) => Promise<unknown> | unknown;
+
+	export interface CompatibleLogger {
+		info(message: unknown): unknown;
+		debug(message: unknown): unknown;
+		error(error: Error): unknown;
+	}
 }

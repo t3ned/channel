@@ -33,6 +33,7 @@ export class ApplicationLoader {
 
 			for (const route of Object.values(mod)) {
 				if (route instanceof Route) {
+					this._debug(`Loading path ${route.path}`);
 					route.path = joinRoutePaths(routePath, route.path);
 					await this.loadRoute(route);
 				}
@@ -48,6 +49,8 @@ export class ApplicationLoader {
 		const versionedRoutes = route.toVersionedRoutes(this.application);
 
 		for (const route of versionedRoutes) {
+			this._debug(`Loading route ${route.path}`);
+
 			const handler = async (req: FastifyRequest, reply: FastifyReply) => {
 				const validated = validate(req, {
 					params: route.paramsSchema,
@@ -99,5 +102,13 @@ export class ApplicationLoader {
 			if (file.isDirectory()) yield* this._recursiveReaddir(`${path}/${file.name}`);
 			else yield `${path}/${file.name}`;
 		}
+	}
+
+	/**
+	 * Output a debug message
+	 * @param message The message to log
+	 */
+	private _debug(message: string): void {
+		if (this.application.debug) this.application.logger.debug(message);
 	}
 }
