@@ -63,3 +63,8 @@ export enum HttpStatus {
 	NotExtended,
 	NetworkAuthenticationRequired,
 }
+
+export enum HttpHeader {
+	Authorization = "authorization",
+	ContentType = "content-type",
+}
