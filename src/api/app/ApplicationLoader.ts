@@ -26,7 +26,7 @@ export class ApplicationLoader {
 			const fileName = basename(path, fileExtension);
 
 			const sliceLength = fileName.startsWith(this.application.routeFileIgnorePrefix)
-				? fileName.length + 1 // add one to remove trailing slash
+				? fileName.length + fileExtension.length + 1 // add one to remove trailing slash
 				: fileExtension.length;
 
 			const routePath = path.slice(this.application.routeDirPath.length, -sliceLength);
