@@ -52,7 +52,7 @@ export class ApplicationLoader {
 			this._debug(`Loading route ${route.path}`);
 
 			const handler = async (req: FastifyRequest, reply: FastifyReply) => {
-				const validated = validate(req, {
+				const validated = await validate(req, {
 					params: route.paramsSchema,
 					query: route.querySchema,
 					body: route.bodySchema,
